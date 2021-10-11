@@ -21,7 +21,7 @@ public class MainHook implements IXposedHookLoadPackage {
             if(lpparam.packageName.equals(DMZJ_PKGN))
                 new dmzj().handleLoadPackage(lpparam);
 
-            else if(lpparam.packageName.equals(DMZJSQ_PKGN))
+            if(lpparam.packageName.equals(DMZJSQ_PKGN))
                 new dmzjsq().handleLoadPackage(lpparam);
 
         }catch (Throwable err){
