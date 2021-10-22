@@ -20,9 +20,11 @@ public class dmzjsq implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
-                        fucks.fuck_AD(classLoader, MainHook.DMZJSQ_PKGN);
-                        fucks.fuck_CheckVersionInfo(classLoader, MainHook.DMZJSQ_PKGN);
-                        fucks.fuck_TeenagerMode(classLoader, MainHook.DMZJSQ_PKGN);
+                        {
+                            fucks.fuck_AD(classLoader, MainHook.DMZJSQ_PKGN);
+                            fucks.fuck_CheckVersionInfo(classLoader, MainHook.DMZJSQ_PKGN);
+                            fucks.fuck_TeenagerMode(classLoader, MainHook.DMZJSQ_PKGN);
+                        }
                     }
                 }
         );
