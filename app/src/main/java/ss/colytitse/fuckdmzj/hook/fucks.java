@@ -8,17 +8,33 @@ public class fucks {
 
     // 关闭广告
     public static void fuck_AD(ClassLoader classLoader, String PKGN){
-
-        XposedHelpers.findAndHookMethod(
-                XposedHelpers.findClass(PKGN + ".bean.GuangGaoBean", classLoader),
-                "getCode",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        param.setResult(-1);
+        
+        {   // 规则一
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass(PKGN + ".bean.GuangGaoBean", classLoader),
+                    "getCode",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            param.setResult(-1);
+                        }
                     }
-                }
-        );
+            );
+        }
+
+        {   // 规则二
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
+                    "LoadShowInfo",int.class,String.class,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            XposedHelpers.callMethod(param.thisObject,"onAdCloseView");
+                            param.setResult(null);
+                        }
+                    }
+            );
+        }
 
     }
 
