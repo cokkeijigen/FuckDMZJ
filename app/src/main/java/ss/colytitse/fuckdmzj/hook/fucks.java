@@ -25,17 +25,16 @@ public class fucks {
         {   // 规则二
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
-                    "LoadShowInfo",int.class,String.class,
+                    "LoadShowInfo", int.class, String.class,
                     new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            XposedHelpers.callMethod(param.thisObject,"onAdCloseView");
+                            XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
                             param.setResult(null);
                         }
                     }
             );
         }
-
     }
 
     // 阻止更新检测
