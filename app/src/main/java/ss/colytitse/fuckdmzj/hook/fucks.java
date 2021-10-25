@@ -53,21 +53,28 @@ public class fucks {
 
         {   // 去除详细页的广告位
 
-            String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
-
-            for(String ad_class : ad_class_list){
-                XposedHelpers.findAndHookMethod(
-                        XposedHelpers.findClass(PKGN + ad_class, classLoader),
-                        "findViews",
-                        new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                RelativeLayout rl = (RelativeLayout) getView(param,"layout_ad_layout");
-                                rl.setVisibility(View.GONE);
+            if(PKGN.equals(MainHook.DMZJ_PKGN)){
+                // 动漫之家普通版
+                String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
+                for(String ad_class : ad_class_list)
+                    XposedHelpers.findAndHookMethod(
+                            XposedHelpers.findClass(PKGN + ad_class, classLoader),
+                            "findViews",
+                            new XC_MethodHook() {
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                    RelativeLayout rl = (RelativeLayout) getView(param,"layout_ad_layout");
+                                    rl.setVisibility(View.GONE);
+                                }
                             }
-                        }
-                );
+                    );
             }
+
+            if(PKGN.equals(MainHook.DMZJSQ_PKGN)){
+                // 动漫之家社区版
+                String[] ad_class_list = {};
+            }
+
         }
     }
 
