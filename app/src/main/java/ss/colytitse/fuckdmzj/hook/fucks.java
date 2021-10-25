@@ -54,7 +54,7 @@ public class fucks {
 
         {   // 去除详细页的广告位
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
-            for(String ad_class : ad_class_list){   /* 通用方案*/
+            for(String ad_class : ad_class_list){   /* 通用方案 */
                 try{
                     XposedHelpers.findAndHookMethod(
                             XposedHelpers.findClass(PKGN + ad_class, classLoader),
