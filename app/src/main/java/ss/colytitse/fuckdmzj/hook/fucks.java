@@ -3,6 +3,7 @@ package ss.colytitse.fuckdmzj.hook;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -55,7 +56,7 @@ public class fucks {
         {   // 去除详细页的广告位
 
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
-            for(String ad_class : ad_class_list){
+            for(String ad_class : ad_class_list){   /* 通用方案*/
                 try{
                     XposedHelpers.findAndHookMethod(
                             XposedHelpers.findClass(PKGN + ad_class, classLoader),
@@ -72,6 +73,17 @@ public class fucks {
                         XposedBridge.log("去除广告页：" + t.toString());
                     }
             }
+
+            if(PKGN.equals(MainHook.DMZJSQ_PKGN))  /* 社区版处理方案 */
+                XposedHelpers.findAndHookConstructor("com.dmzjsq.manhua_kt.views.custom.CartoonDetailsView",
+                        classLoader, Context.class, AttributeSet.class, int.class,
+                        new XC_MethodHook() {
+                            @Override
+                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                FrameLayout ft = (FrameLayout) getView(param,"adLayout");
+                                ft.setVisibility(View.GONE);
+                            }
+                });
         }
     }
 
