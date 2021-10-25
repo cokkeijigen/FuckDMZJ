@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import ss.colytitse.fuckdmzj.MainHook;
 
@@ -53,10 +54,9 @@ public class fucks {
 
         {   // 去除详细页的广告位
 
-            if(PKGN.equals(MainHook.DMZJ_PKGN)){
-                // 动漫之家普通版
-                String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
-                for(String ad_class : ad_class_list)
+            String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
+            for(String ad_class : ad_class_list){
+                try{
                     XposedHelpers.findAndHookMethod(
                             XposedHelpers.findClass(PKGN + ad_class, classLoader),
                             "findViews",
@@ -67,14 +67,11 @@ public class fucks {
                                     rl.setVisibility(View.GONE);
                                 }
                             }
-                    );
+                        );
+                    }catch (Throwable t){
+                        XposedBridge.log("去除广告页：" + t.toString());
+                    }
             }
-
-            if(PKGN.equals(MainHook.DMZJSQ_PKGN)){
-                // 动漫之家社区版
-                String[] ad_class_list = {};
-            }
-
         }
     }
 
