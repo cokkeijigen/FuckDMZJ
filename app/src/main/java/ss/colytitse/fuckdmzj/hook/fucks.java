@@ -1,7 +1,10 @@
 package ss.colytitse.fuckdmzj.hook;
 
 import android.app.Activity;
+import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
@@ -20,7 +23,7 @@ public class fucks {
 
     // 去除广告
     public static void fuck_AD(ClassLoader classLoader, String PKGN){
-        
+
         {   // 规则一
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".bean.GuangGaoBean", classLoader),
@@ -49,20 +52,22 @@ public class fucks {
         }
 
         {   // 去除详细页的广告位
-            String ActVeCla = (PKGN.equals(MainHook.DMZJ_PKGN)) ?
-                    ".ui.CartoonInstructionActivity":
-                    ".ui.NovelInstructionActivity";
-            XposedHelpers.findAndHookMethod(
-                    XposedHelpers.findClass(PKGN + ActVeCla, classLoader),
-                    "findViews",
-                    new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            RelativeLayout rl = (RelativeLayout) getView(param,"layout_ad_layout");
-                            rl.setVisibility(View.GONE);
+            
+            String[] arry_ad_class = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
+
+            for(String ad_class : arry_ad_class){
+                XposedHelpers.findAndHookMethod(
+                        XposedHelpers.findClass(PKGN + ad_class, classLoader),
+                        "findViews",
+                        new XC_MethodHook() {
+                            @Override
+                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                RelativeLayout rl = (RelativeLayout) getView(param,"layout_ad_layout");
+                                rl.setVisibility(View.GONE);
+                            }
                         }
-                    }
-            );
+                );
+            }
         }
     }
 
