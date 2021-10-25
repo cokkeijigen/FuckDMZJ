@@ -3,13 +3,11 @@ package ss.colytitse.fuckdmzj.hook;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import ss.colytitse.fuckdmzj.MainHook;
 
@@ -69,9 +67,7 @@ public class fucks {
                                 }
                             }
                         );
-                    }catch (Throwable t){
-                        XposedBridge.log("去除广告页：" + t.toString());
-                    }
+                    }catch (Throwable ignored){}
             }
 
             if(PKGN.equals(MainHook.DMZJSQ_PKGN))  /* 社区版处理方案 */
