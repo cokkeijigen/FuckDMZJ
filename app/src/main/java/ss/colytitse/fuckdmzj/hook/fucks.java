@@ -89,7 +89,7 @@ public class fucks {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     RelativeLayout layout_container = (RelativeLayout)getView(param,"layout_container");
                     ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams)layout_container.getLayoutParams();
-                    layoutParams.height = 0;
+                    layoutParams.height = 0; // 不知道为啥设置Visibility不管用，只好把控件高度设置为0
                     layout_container.setLayoutParams(layoutParams);
                 }
             });
