@@ -62,8 +62,8 @@ public class fucks {
                             new XC_MethodHook() {
                                 @Override
                                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    RelativeLayout rl = (RelativeLayout) getView(param,"layout_ad_layout");
-                                    rl.setVisibility(View.GONE);
+                                    RelativeLayout layout_ad_layout = (RelativeLayout) getView(param,"layout_ad_layout");
+                                    layout_ad_layout.setVisibility(View.GONE);
                                 }
                             }
                         );
@@ -76,10 +76,23 @@ public class fucks {
                         new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                FrameLayout ft = (FrameLayout) getView(param,"adLayout");
-                                ft.setVisibility(View.GONE);
+                                FrameLayout adLayout = (FrameLayout) getView(param,"adLayout");
+                                adLayout.setVisibility(View.GONE);
                             }
                 });
+        }
+
+        {   // 小说阅读页面广告位
+            XposedHelpers.findAndHookMethod(PKGN + ".ui.NovelBrowseActivity", classLoader,
+                    "findViews", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    RelativeLayout layout_container = (RelativeLayout)getView(param,"layout_container");
+                    ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams)layout_container.getLayoutParams();
+                    layoutParams.height = 0;
+                    layout_container.setLayoutParams(layoutParams);
+                }
+            });
         }
     }
 
@@ -96,7 +109,6 @@ public class fucks {
                     }
                 }
         );
-
     }
 
     // 关闭青少年傻逼弹窗
