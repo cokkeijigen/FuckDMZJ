@@ -25,7 +25,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 new dmzjsq().handleLoadPackage(lpparam);
 
         }catch (Throwable err){
-            XposedBridge.log("奇怪的bug：" + err);
+            XposedBridge.log("奇怪的错误：" + err);
         }
 
     }
