@@ -15,7 +15,7 @@ import ss.colytitse.fuckdmzj.MainHook;
 public class fucks {
 
     // 获取控件
-    private static Object getView(XC_MethodHook.MethodHookParam param,String id_name) throws Throwable {
+    private static Object getView(XC_MethodHook.MethodHookParam param,String id_name) {
         Class clazz = param.thisObject.getClass();
         Field field = clazz.getDeclaredField(id_name);
         field.setAccessible(true);
