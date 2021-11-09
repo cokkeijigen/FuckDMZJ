@@ -2,12 +2,10 @@ package ss.colytitse.fuckdmzj.hook;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
@@ -89,7 +87,7 @@ public class fucks {
 
         try /* 去除小说与漫画详细页的广告位 */ {
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
-            for(String ad_class : ad_class_list){   /* 通用方案 */
+            for(String ad_class : ad_class_list) /* 通用方案 */{
                 try{
                     XposedHelpers.findAndHookMethod(
                             XposedHelpers.findClass(PKGN + ad_class, classLoader),
@@ -106,8 +104,8 @@ public class fucks {
                     }catch (Throwable ignored){}
             }
 
-            if(PKGN.equals(MainHook.DMZJSQ_PKGN))  /* 社区版处理方案 */
-                XposedHelpers.findAndHookConstructor("com.dmzjsq.manhua_kt.views.custom.CartoonDetailsView",
+            if(PKGN.equals(MainHook.DMZJSQ_PKGN))  /* 社区版处理方案 */{
+                XposedHelpers.findAndHookConstructor(PKGN + "_kt.views.custom.CartoonDetailsView",
                         classLoader, Context.class, AttributeSet.class, int.class,
                         new XC_MethodHook() {
                             @Override
@@ -116,7 +114,7 @@ public class fucks {
                                 adLayout.setVisibility(View.GONE);
                                 XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
-                });
+                });}
         }catch (Throwable t){
             XposedBridge.log("FUDM_AD_findViews_01:" + t.toString());
         }
