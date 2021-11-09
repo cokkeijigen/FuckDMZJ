@@ -20,7 +20,7 @@ public class fucks {
         Class<?> clazz = param.thisObject.getClass();
         Field field = clazz.getDeclaredField(id_name);
         field.setAccessible(true);
-        return  field.get(param.thisObject);
+        return field.get(param.thisObject);
     }
 
     // 去除广告
@@ -34,6 +34,7 @@ public class fucks {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) {
                             param.setResult(-1);
+                            XposedBridge.log("FUDM_RU_01: SUCCESS");
                         }
                     }
             );
@@ -41,7 +42,22 @@ public class fucks {
             XposedBridge.log("FUDM_RU_01:" + t.toString());
         }
 
-        try{   // 规则二
+        try {   // 规则二
+            Class<?> clazz = XposedHelpers.findClass(PKGN+".bean.GuangGaoBean",classLoader);
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass(PKGN + ".ad.adv.channels", classLoader), "loadFloatAd", clazz, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            param.setResult(null);
+                            XposedBridge.log("FUDM_RU_02: SUCCESS");
+                        }
+                    }
+            );
+        }catch (Throwable t){
+            XposedBridge.log("FUDM_RU_02:" + t.toString());
+        }
+
+        try{   // 规则三
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
                     "LoadShowInfo", int.class, String.class,
@@ -50,32 +66,28 @@ public class fucks {
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
                             param.setResult(null);
+                            XposedBridge.log("FUDM_RU_03: SUCCESS");
                         }
                     }
             );
         }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_02:" + t.toString());
+            XposedBridge.log("FUDM_RU_03:" + t.toString());
         }
 
-        try {   // 规则三
+        try {  // 规则四
             Class<?> clazz = XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader);
             XC_MethodHook FUCK = new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                   param.setResult(null);
-                }
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    Activity activity = (Activity) getView(param,"activity");
-                    activity.finish();
                     param.setResult(null);
-                };
+                    XposedBridge.log("FUDM_RU_04: SUCCESS");
+                }
             };
             XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,FUCK);
             XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,boolean.class,FUCK);
             XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,Context.class,FUCK);
         }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_03:" + t.toString());
+            XposedBridge.log("FUDM_RU_04:" + t.toString());
         }
 
         try{   // 去除详细页的广告位
@@ -90,6 +102,7 @@ public class fucks {
                                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                     RelativeLayout layout_ad_layout = (RelativeLayout) getView(param,"layout_ad_layout");
                                     layout_ad_layout.setVisibility(View.GONE);
+                                    XposedBridge.log("FUDM_AD_findViews_01_s1: SUCCESS");
                                 }
                             }
                         );
@@ -104,6 +117,7 @@ public class fucks {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 FrameLayout adLayout = (FrameLayout) getView(param,"adLayout");
                                 adLayout.setVisibility(View.GONE);
+                                XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
                 });
         }catch (Throwable t){
@@ -119,6 +133,7 @@ public class fucks {
                     ViewGroup.LayoutParams layoutParams = layout_container.getLayoutParams();
                     layoutParams.height = 0; // 不知道为啥设置Visibility不管用，只好把控件高度设置为0
                     layout_container.setLayoutParams(layoutParams);
+                    XposedBridge.log("FUDM_AD_findViews_02: SUCCESS");
                 }
             });
         }catch (Throwable t){
@@ -136,6 +151,7 @@ public class fucks {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             param.setResult(null);
+                            XposedBridge.log("FUDM_CheckVersionInfo: SUCCESS");
                         }
                     }
             );
@@ -155,6 +171,7 @@ public class fucks {
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             XposedHelpers.callMethod(param.thisObject, "finish");
                             param.setResult(null);
+                            XposedBridge.log("FUDM_TeenagerMode: SUCCESS");
                         }
                     }
             );
