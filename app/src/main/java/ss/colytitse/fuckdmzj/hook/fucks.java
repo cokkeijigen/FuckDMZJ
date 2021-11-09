@@ -2,10 +2,12 @@ package ss.colytitse.fuckdmzj.hook;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
@@ -14,6 +16,16 @@ import de.robv.android.xposed.XposedHelpers;
 import ss.colytitse.fuckdmzj.MainHook;
 
 public class fucks {
+
+    // 指定的类加载器
+    private static ClassLoader classLoader;
+    // 指定的包名
+    private static String PKGN;
+
+    public fucks(ClassLoader classLoader,String PKGN){
+        fucks.classLoader = classLoader;
+        fucks.PKGN = PKGN;
+    }
 
     // 获取控件
     private static Object getView(XC_MethodHook.MethodHookParam param,String id_name) throws Throwable {
@@ -24,9 +36,9 @@ public class fucks {
     }
 
     // 去除广告
-    public static void fuck_AD(ClassLoader classLoader, String PKGN) {
+    public void fuck_AD() {
 
-        try{   // 规则一
+        try /* 规则一 */ {
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".bean.GuangGaoBean", classLoader),
                     "getCode",
@@ -42,22 +54,23 @@ public class fucks {
             XposedBridge.log("FUDM_RU_01:" + t.toString());
         }
 
-        try {   // 规则二
-            Class<?> clazz = XposedHelpers.findClass(PKGN+".bean.GuangGaoBean",classLoader);
+        try /* 规则二 */ {
             XposedHelpers.findAndHookMethod(
-                    XposedHelpers.findClass(PKGN + ".ad.adv.channels", classLoader), "loadFloatAd", clazz, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            param.setResult(null);
-                            XposedBridge.log("FUDM_RU_02: SUCCESS");
-                        }
-                    }
-            );
+                   XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
+                    "displayByChannelid", int.class,
+                   new XC_MethodHook() {
+                       @Override
+                       protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                           param.setResult(null);
+                           XposedBridge.log("FUDM_RU_02: SUCCESS");
+                       }
+                   }
+           );
         }catch (Throwable t){
             XposedBridge.log("FUDM_RU_02:" + t.toString());
         }
 
-        try{   // 规则三
+        try /* 规则三 */ {
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
                     "LoadShowInfo", int.class, String.class,
@@ -74,23 +87,7 @@ public class fucks {
             XposedBridge.log("FUDM_RU_03:" + t.toString());
         }
 
-        try {  // 规则四
-            Class<?> clazz = XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader);
-            XC_MethodHook FUCK = new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.setResult(null);
-                    XposedBridge.log("FUDM_RU_04: SUCCESS");
-                }
-            };
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,FUCK);
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,boolean.class,FUCK);
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,Context.class,FUCK);
-        }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_04:" + t.toString());
-        }
-
-        try{   // 去除详细页的广告位
+        try /* 去除小说与漫画详细页的广告位 */ {
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
             for(String ad_class : ad_class_list){   /* 通用方案 */
                 try{
@@ -124,7 +121,7 @@ public class fucks {
             XposedBridge.log("FUDM_AD_findViews_01:" + t.toString());
         }
 
-        try {   // 小说阅读页面广告位
+        try /* 去除小说阅读页面广告位 */ {
             XposedHelpers.findAndHookMethod(PKGN + ".ui.NovelBrowseActivity", classLoader,
                     "findViews", new XC_MethodHook() {
                 @Override
@@ -142,7 +139,7 @@ public class fucks {
     }
 
     // 阻止更新检测
-    public static void fuck_CheckVersionInfo(ClassLoader classLoader, String PKGN){
+    public void fuck_CheckVersionInfo(){
         try{
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".helper.AppUpDataHelper",classLoader),
@@ -161,7 +158,7 @@ public class fucks {
     }
 
     // 关闭青少年傻逼弹窗
-    public static void fuck_TeenagerMode(ClassLoader classLoader, String PKGN){
+    public void fuck_TeenagerMode(){
         try {
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + "_kt.ui.TeenagerModeDialogActivity", classLoader),
@@ -180,8 +177,10 @@ public class fucks {
         }
     }
 
+
+
     // 阻止粘贴板被强○
-   public static void DoNotFuckMyClipboard(ClassLoader classLoader) {
+   public void DoNotFuckMyClipboard() {
 
     }
 }

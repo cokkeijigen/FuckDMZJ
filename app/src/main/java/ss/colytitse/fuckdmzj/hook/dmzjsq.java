@@ -13,7 +13,7 @@ public class dmzjsq implements IXposedHookLoadPackage {
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
 
-        XposedBridge.log("测试内容：已运行动漫之家社区版");
+        XposedBridge.log("FUDM：已运行动漫之家社区版");
 
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                 new XC_MethodHook() {
@@ -21,9 +21,10 @@ public class dmzjsq implements IXposedHookLoadPackage {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
                         try {
-                            fucks.fuck_AD(classLoader, MainHook.DMZJSQ_PKGN);
-                            fucks.fuck_CheckVersionInfo(classLoader, MainHook.DMZJSQ_PKGN);
-                            fucks.fuck_TeenagerMode(classLoader, MainHook.DMZJSQ_PKGN);
+                            fucks fk = new fucks(classLoader,MainHook.DMZJSQ_PKGN);
+                            fk.fuck_AD();
+                            fk.fuck_CheckVersionInfo();
+                            fk.fuck_TeenagerMode();
                         }catch (Throwable t){
                             XposedBridge.log("FUDMSQ_ERR:"+t.toString());
                         }
