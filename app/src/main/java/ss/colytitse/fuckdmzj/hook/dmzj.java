@@ -15,20 +15,20 @@ public class dmzj implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
 
         XposedBridge.log("测试内容：已运行动漫之家普通版");
-
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
-                        {
+                        try {
                             fucks.fuck_AD(classLoader, MainHook.DMZJ_PKGN);
                             fucks.fuck_CheckVersionInfo(classLoader, MainHook.DMZJ_PKGN);
                             fucks.fuck_TeenagerMode(classLoader, MainHook.DMZJ_PKGN);
+                        }catch (Throwable t){
+                            XposedBridge.log("FUDM_ERR:"+t.toString());
                         }
                     }
                 }
         );
-
     }
 }
