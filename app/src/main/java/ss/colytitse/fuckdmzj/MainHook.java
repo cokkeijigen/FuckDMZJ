@@ -23,7 +23,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 /* 运行社区版 */
                 new dmzjsq().handleLoadPackage(lpparam);
         }catch (Throwable t){
-            XposedBridge.log("\n\n------------------------------------------------------\n"
+            XposedBridge.log(".\n------------------------------------------------------\n"
                     +"FUDM_MAIN: " + t.toString()+
                     "\n------------------------------------------------------\n"
             );
