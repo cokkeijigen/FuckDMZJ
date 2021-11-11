@@ -21,9 +21,9 @@ public class dmzjsq implements IXposedHookLoadPackage {
                         try {
                             XposedBridge.log("FUDM：已运行动漫之家社区版");
                             fucks fk = new fucks(classLoader,MainHook.DMZJSQ_PKGN);
-                            fk.fuck_AdByAll();
-                            fk.fuck_CheckVersionInfo();
-                            fk.fuck_TeenagerMode();
+                            fk.fuckAdByAll();
+                            fk.fuckAppUpData();
+                            fk.fuckTeenagerMode();
                         }catch (Throwable t){
                             XposedBridge.log("FUDMSQ_ERR:"+t.toString());
                         }

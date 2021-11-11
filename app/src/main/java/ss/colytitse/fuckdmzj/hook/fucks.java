@@ -36,7 +36,7 @@ public class fucks {
     }
 
     // 去除广告
-    public void fuck_AdByAll() {
+    public void fuckAdByAll() {
 
         try /* 规则一 */ {
             XposedHelpers.findAndHookMethod(
@@ -113,7 +113,7 @@ public class fucks {
     }
 
     // 阻止更新检测
-    public void fuck_CheckVersionInfo(){
+    public void fuckAppUpData(){
         try{
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".helper.AppUpDataHelper",classLoader),
@@ -132,7 +132,7 @@ public class fucks {
     }
 
     // 关闭青少年傻逼弹窗
-    public void fuck_TeenagerMode(){
+    public void fuckTeenagerMode(){
         try {
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + "_kt.ui.TeenagerModeDialogActivity", classLoader),
