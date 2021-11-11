@@ -28,7 +28,7 @@ public class fucks {
     }
 
     // 获取字段
-    private static Object geField(XC_MethodHook.MethodHookParam param,String name) throws Throwable {
+    private static Object getField(XC_MethodHook.MethodHookParam param,String name) throws Throwable {
         Class<?> clazz = param.thisObject.getClass();
         Field field = clazz.getDeclaredField(name);
         field.setAccessible(true);
@@ -71,7 +71,7 @@ public class fucks {
                             new XC_MethodHook() {
                                 @Override
                                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    RelativeLayout layout_ad_layout = (RelativeLayout) geField(param,"layout_ad_layout");
+                                    RelativeLayout layout_ad_layout = (RelativeLayout) getField(param,"layout_ad_layout");
                                     layout_ad_layout.setVisibility(View.GONE);
                                     XposedBridge.log("FUDM_AD_findViews_01_s1: SUCCESS");
                                 }
@@ -86,7 +86,7 @@ public class fucks {
                         new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                FrameLayout adLayout = (FrameLayout) geField(param,"adLayout");
+                                FrameLayout adLayout = (FrameLayout) getField(param,"adLayout");
                                 adLayout.setVisibility(View.GONE);
                                 XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
@@ -100,7 +100,7 @@ public class fucks {
                     "findViews", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    RelativeLayout layout_container = (RelativeLayout)geField(param,"layout_container");
+                    RelativeLayout layout_container = (RelativeLayout)getField(param,"layout_container");
                     ViewGroup.LayoutParams layoutParams = layout_container.getLayoutParams();
                     layoutParams.height = 0; // 不知道为啥设置Visibility不管用，只好把控件高度设置为0
                     layout_container.setLayoutParams(layoutParams);
