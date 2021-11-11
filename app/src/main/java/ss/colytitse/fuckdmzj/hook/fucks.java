@@ -55,7 +55,18 @@ public class fucks {
         }
 
         try /* 规则二 */ {
-
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
+                    "LoadShowInfo", int.class, String.class,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
+                            param.setResult(null);
+                            XposedBridge.log("FUDM_RU_02: SUCCESS");
+                        }
+                    }
+            );
         }catch (Throwable t){
             XposedBridge.log("FUDM_RU_02: " + t.toString());
         }
