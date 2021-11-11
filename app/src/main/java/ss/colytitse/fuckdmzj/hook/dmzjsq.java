@@ -10,7 +10,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.MainHook;
 
 public class dmzjsq implements IXposedHookLoadPackage {
-
+    
+    @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
