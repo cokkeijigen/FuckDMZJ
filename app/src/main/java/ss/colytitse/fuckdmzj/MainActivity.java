@@ -1,15 +1,17 @@
 package ss.colytitse.fuckdmzj;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -28,22 +30,25 @@ public class MainActivity extends Activity {
         return null;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //获取剪贴板管理器：
-        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        // 创建普通字符型ClipData
-        ClipData mClipData = ClipData.newPlainText("Label", "这里是要复制的文字");
-        // 将ClipData内容放到系统剪贴板里。
-        cm.setPrimaryClip(mClipData);
-
         setContentView(R.layout.main_layout);
         {
             String Name = "当前版本：" + getVersionName(this) +"\n\n By iTsukezigen";
             TextView VersionInfo = findViewById(R.id.versionName);
             VersionInfo.setText(Name);
+        }
+        {
+            String url = "https://github.com/cokkeijigen/FuckDMZJ";
+            TextView linkinfo = findViewById(R.id.link);
+            linkinfo.setText("仓库地址：" + url);
+            linkinfo.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            });
         }
     }
 }

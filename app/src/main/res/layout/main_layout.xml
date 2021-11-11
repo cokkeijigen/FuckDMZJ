@@ -22,8 +22,7 @@
             android:id="@+id/link"
             android:layout_width="match_parent"
             android:layout_height="34dp"
-            android:gravity="center"
-            android:text="仓库地址：https://github.com/cokkeijigen/FuckDMZJ" />
+            android:gravity="center" />
     </LinearLayout>
 
     <LinearLayout

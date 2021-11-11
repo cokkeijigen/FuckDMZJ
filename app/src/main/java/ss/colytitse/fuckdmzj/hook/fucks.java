@@ -1,8 +1,6 @@
 package ss.colytitse.fuckdmzj.hook;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -163,26 +161,29 @@ public class fucks {
 
     // 阻止粘贴板被强○
    public void DoNotFuckMyClipboard() {
+
+        String str = " DoNotFuckMyClipboard";
+        String logs = PKGN.equals(MainHook.DMZJ_PKGN) ? "DMZJ"+str : "DMZJSQ"+str;
+
         try {
            XposedHelpers.findAndHookMethod(
                    XposedHelpers.findClass("android.content.ClipData", classLoader),
                    "newPlainText", CharSequence.class, CharSequence.class,
                    new XC_MethodHook() {
                        @Override
-                       protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                       protected void beforeHookedMethod(MethodHookParam param) {
                            String s = param.args[1].toString();
                            if(!(param.args[1].toString().contains("http"))){
                                param.args[1]="";
                                param.setResult(null);
-                               XposedBridge.log("已阻止动漫之家乱强○粘贴板："+ s);
+                               XposedBridge.log(logs +": "+ s);
                            }
                        }
                    }
            );
         }catch (Throwable t){
-            XposedBridge.log("MDZJ DoNotFuckMyClipboard_01: " + t.toString());
+            XposedBridge.log(logs +" 01 ERR: " + t.toString());
         }
-
         try{
            XposedHelpers.findAndHookMethod(
                    XposedHelpers.findClass("android.content.ClipboardManager", classLoader),
@@ -193,13 +194,13 @@ public class fucks {
                            if(!(param.args[0].toString().contains("http"))){
                                param.args[0]="";
                                param.setResult(null);
-                               XposedBridge.log("已阻止动漫之家乱强○粘贴板："+ s);
+                               XposedBridge.log(logs +": "+ s);
                            }
                        }
                    }
            );
         }catch (Throwable t){
-            XposedBridge.log("MDZJ DoNotFuckMyClipboard_02: " + t.toString());
+            XposedBridge.log(logs +" 02 ERR: " + t.toString());
         }
     }
 
