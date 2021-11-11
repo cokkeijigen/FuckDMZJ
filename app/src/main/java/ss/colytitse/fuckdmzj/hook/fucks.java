@@ -27,10 +27,10 @@ public class fucks {
         fucks.PKGN = PKGN;
     }
 
-    // 获取控件
-    private static Object getView(XC_MethodHook.MethodHookParam param,String id_name) throws Throwable {
+    // 获取字段
+    private static Object geField(XC_MethodHook.MethodHookParam param,String name) throws Throwable {
         Class<?> clazz = param.thisObject.getClass();
-        Field field = clazz.getDeclaredField(id_name);
+        Field field = clazz.getDeclaredField(name);
         field.setAccessible(true);
         return field.get(param.thisObject);
     }
@@ -55,74 +55,9 @@ public class fucks {
         }
 
         try /* 规则二 */ {
-//            XposedHelpers.findAndHookMethod(
-//                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
-//                    "LoadShowInfo", int.class, String.class,
-//                    new XC_MethodHook() {
-//                        @Override
-//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                            XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
-//                        }
-//                    }
-//            );
-//            XposedHelpers.findAndHookMethod(
-//                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader), "checkAdid", int.class,
-//                    new XC_MethodHook() {
-//                        @Override
-//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                            ViewGroup container = (ViewGroup)getView(param,"container");
-//                            container.setVisibility(View.GONE);
-//                            param.setResult(null);
-//                            XposedBridge.log("FUDM_RU_02: SUCCESS");
-//                        }
-//                    }
-//            );
-            XposedHelpers.findAndHookMethod(
-                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
-                    "displayByChannelid", int.class,
-                    new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            param.setResult(null);
-                        }
-                    }
-            );
-
-            Class<?> clazz = XposedHelpers.findClass(PKGN+".bean.GuangGaoBean",classLoader);
-
-            XposedHelpers.findAndHookMethod(
-                    XposedHelpers.findClass(PKGN + ".ad.adv.channels.LTcustom", classLoader), "loadFloatAd",
-                    clazz, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            ViewGroup container = (ViewGroup)getView(param,"container");
-                            container.setVisibility(View.GONE);
-                            param.setResult(null);
-                            XposedBridge.log("FUDM：取消浮动广告");
-                        }
-                    }
-            );
 
         }catch (Throwable t){
             XposedBridge.log("FUDM_RU_02: " + t.toString());
-        }
-
-
-        try /* 规则三 */ {
-            XC_MethodHook fuck = new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
-                    param.setResult(null);
-                    XposedBridge.log("FUDM_RU_03: SUCCESS");
-                }
-            };
-            Class<?> clazz = XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader);
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,fuck);
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,boolean.class,fuck);
-            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,Context.class,fuck);
-        }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_03: " + t.toString());
         }
 
 
@@ -136,7 +71,7 @@ public class fucks {
                             new XC_MethodHook() {
                                 @Override
                                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    RelativeLayout layout_ad_layout = (RelativeLayout) getView(param,"layout_ad_layout");
+                                    RelativeLayout layout_ad_layout = (RelativeLayout) geField(param,"layout_ad_layout");
                                     layout_ad_layout.setVisibility(View.GONE);
                                     XposedBridge.log("FUDM_AD_findViews_01_s1: SUCCESS");
                                 }
@@ -151,7 +86,7 @@ public class fucks {
                         new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                FrameLayout adLayout = (FrameLayout) getView(param,"adLayout");
+                                FrameLayout adLayout = (FrameLayout) geField(param,"adLayout");
                                 adLayout.setVisibility(View.GONE);
                                 XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
@@ -165,7 +100,7 @@ public class fucks {
                     "findViews", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    RelativeLayout layout_container = (RelativeLayout)getView(param,"layout_container");
+                    RelativeLayout layout_container = (RelativeLayout)geField(param,"layout_container");
                     ViewGroup.LayoutParams layoutParams = layout_container.getLayoutParams();
                     layoutParams.height = 0; // 不知道为啥设置Visibility不管用，只好把控件高度设置为0
                     layout_container.setLayoutParams(layoutParams);
