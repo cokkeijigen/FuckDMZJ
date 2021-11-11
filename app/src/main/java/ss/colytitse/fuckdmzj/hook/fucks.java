@@ -15,13 +15,15 @@ import ss.colytitse.fuckdmzj.MainHook;
 
 public class fucks {
 
-    // 指定的类加载器
-    private static ClassLoader classLoader;
-    // 指定的包名
+    // 对象包名
     private static String PKGN;
+    // 类加载器
+    private static ClassLoader classLoader;
 
-    public fucks(ClassLoader classLoader,String PKGN){
+    public fucks(ClassLoader classLoader, String PKGN){
+        // 初始化活动类加载器
         fucks.classLoader = classLoader;
+        // 初始化对象的包名
         fucks.PKGN = PKGN;
     }
 
@@ -34,7 +36,7 @@ public class fucks {
     }
 
     // 去除广告
-    public void fuck_AD() {
+    public void fuck_AdByAll() {
 
         try /* 规则一 */ {
             XposedHelpers.findAndHookMethod(
@@ -53,37 +55,76 @@ public class fucks {
         }
 
         try /* 规则二 */ {
-            XposedHelpers.findAndHookMethod(
-                   XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
-                    "displayByChannelid", int.class,
-                   new XC_MethodHook() {
-                       @Override
-                       protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                           param.setResult(null);
-                           XposedBridge.log("FUDM_RU_02: SUCCESS");
-                       }
-                   }
-           );
-        }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_02:" + t.toString());
-        }
-
-        try /* 规则三 */ {
+//            XposedHelpers.findAndHookMethod(
+//                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
+//                    "LoadShowInfo", int.class, String.class,
+//                    new XC_MethodHook() {
+//                        @Override
+//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                            XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
+//                        }
+//                    }
+//            );
+//            XposedHelpers.findAndHookMethod(
+//                    XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader), "checkAdid", int.class,
+//                    new XC_MethodHook() {
+//                        @Override
+//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                            ViewGroup container = (ViewGroup)getView(param,"container");
+//                            container.setVisibility(View.GONE);
+//                            param.setResult(null);
+//                            XposedBridge.log("FUDM_RU_02: SUCCESS");
+//                        }
+//                    }
+//            );
             XposedHelpers.findAndHookMethod(
                     XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader),
-                    "LoadShowInfo", int.class, String.class,
+                    "displayByChannelid", int.class,
                     new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
                             param.setResult(null);
-                            XposedBridge.log("FUDM_RU_03: SUCCESS");
                         }
                     }
             );
+
+            Class<?> clazz = XposedHelpers.findClass(PKGN+".bean.GuangGaoBean",classLoader);
+
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass(PKGN + ".ad.adv.channels.LTcustom", classLoader), "loadFloatAd",
+                    clazz, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            ViewGroup container = (ViewGroup)getView(param,"container");
+                            container.setVisibility(View.GONE);
+                            param.setResult(null);
+                            XposedBridge.log("FUDM：取消浮动广告");
+                        }
+                    }
+            );
+
         }catch (Throwable t){
-            XposedBridge.log("FUDM_RU_03:" + t.toString());
+            XposedBridge.log("FUDM_RU_02: " + t.toString());
         }
+
+
+        try /* 规则三 */ {
+            XC_MethodHook fuck = new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
+                    param.setResult(null);
+                    XposedBridge.log("FUDM_RU_03: SUCCESS");
+                }
+            };
+            Class<?> clazz = XposedHelpers.findClass(PKGN + ".ad.adv.LTUnionADPlatform", classLoader);
+            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,fuck);
+            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,boolean.class,fuck);
+            XposedHelpers.findAndHookMethod(clazz,"displayAd",ViewGroup.class,int.class,Context.class,fuck);
+        }catch (Throwable t){
+            XposedBridge.log("FUDM_RU_03: " + t.toString());
+        }
+
 
         try /* 去除小说与漫画详细页的广告位 */ {
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
@@ -175,6 +216,9 @@ public class fucks {
         }
     }
 
+    // 自动签到
+    public void UserSign(){
+    }
 
 
     // 阻止粘贴板被强○

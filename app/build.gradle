@@ -10,9 +10,16 @@ android {
         minSdk 20
         targetSdk 31
         versionCode 298
-        versionName "v1.0.3"
-
+        versionName "v1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                //自定义输出的APK名称
+                outputFileName = "FuckDMZJ_${variant.versionName}_${variant.name}.apk"
+            }
     }
 
     buildTypes {
@@ -30,7 +37,7 @@ android {
 dependencies {
     compileOnly 'de.robv.android.xposed:api:82'
 //    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
 //    testImplementation 'junit:junit:4.+'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -15,19 +15,19 @@ public class MainHook implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-
         try {
-
             if(lpparam.packageName.equals(DMZJ_PKGN))
+                /* 运行普通版 */
                 new dmzj().handleLoadPackage(lpparam);
-
             if(lpparam.packageName.equals(DMZJSQ_PKGN))
+                /* 运行社区版 */
                 new dmzjsq().handleLoadPackage(lpparam);
-
-        }catch (Throwable err){
-            XposedBridge.log("奇怪的报错：" + err);
+        }catch (Throwable t){
+            XposedBridge.log("\n\n------------------------------------------------------\n"
+                    +"FUDM_MAIN: " + t.toString()+
+                    "\n------------------------------------------------------\n"
+            );
         }
-
     }
 
 }
