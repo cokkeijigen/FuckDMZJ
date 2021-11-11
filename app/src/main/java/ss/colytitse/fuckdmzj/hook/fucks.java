@@ -161,6 +161,7 @@ public class fucks {
 
     // 阻止粘贴板被强○
    public void DoNotFuckMyClipboard() {
+
         String str = " DoNotFuckMyClipboard";
         String logs = PKGN.equals(MainHook.DMZJ_PKGN) ? "DMZJ"+str : "DMZJSQ"+str;
 
@@ -175,13 +176,13 @@ public class fucks {
                            if(!(param.args[1].toString().contains("http"))){
                                param.args[1]="";
                                param.setResult(null);
-                               XposedBridge.log(logs +":"+ s);
+                               XposedBridge.log(logs +": "+ s);
                            }
                        }
                    }
            );
         }catch (Throwable t){
-            XposedBridge.log(logs +" 01 ERR:" + t.toString());
+            XposedBridge.log(logs +" 01 ERR: " + t.toString());
         }
         try{
            XposedHelpers.findAndHookMethod(
@@ -193,13 +194,13 @@ public class fucks {
                            if(!(param.args[0].toString().contains("http"))){
                                param.args[0]="";
                                param.setResult(null);
-                               XposedBridge.log(logs +":"+ s);
+                               XposedBridge.log(logs +": "+ s);
                            }
                        }
                    }
            );
         }catch (Throwable t){
-            XposedBridge.log(logs +" 02 ERR:" + t.toString());
+            XposedBridge.log(logs +" 02 ERR: " + t.toString());
         }
     }
 
