@@ -17,8 +17,8 @@ android {
     android.applicationVariants.all {
         variant ->
             variant.outputs.all {
-                //自定义输出的APK名称
-                outputFileName = "FuckDMZJ_${variant.versionName}_${variant.name}.apk"
+                outputFileName =  /* apk命名方式：名称_版本_编译时间 */
+                        "FuckDMZJ_${variant.versionName}_${new Date().format("HHmmss", TimeZone.getTimeZone("GMT+8"))}.apk"
             }
     }
 
@@ -37,5 +37,4 @@ android {
 dependencies {
     compileOnly 'de.robv.android.xposed:api:82'
     implementation 'com.google.android.material:material:1.4.0'
-
 }

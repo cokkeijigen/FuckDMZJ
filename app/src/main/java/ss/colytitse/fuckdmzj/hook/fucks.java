@@ -1,6 +1,8 @@
 package ss.colytitse.fuckdmzj.hook;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,10 +22,8 @@ public class fucks {
     // 类加载器
     private static ClassLoader classLoader;
 
-    public fucks(ClassLoader classLoader, String PKGN){
-        // 初始化活动类加载器
+    public fucks(ClassLoader classLoader, String PKGN) /* 初始化 */ {
         fucks.classLoader = classLoader;
-        // 初始化对象的包名
         fucks.PKGN = PKGN;
     }
 
@@ -60,7 +60,7 @@ public class fucks {
                     "LoadShowInfo", int.class, String.class,
                     new XC_MethodHook() {
                         @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) {
                             XposedHelpers.callMethod(param.thisObject, "onAdCloseView");
                             param.setResult(null);
                             XposedBridge.log("FUDM_RU_02: SUCCESS");
@@ -70,7 +70,6 @@ public class fucks {
         }catch (Throwable t){
             XposedBridge.log("FUDM_RU_02: " + t.toString());
         }
-
 
         try /* 去除小说与漫画详细页的广告位 */ {
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
@@ -131,14 +130,14 @@ public class fucks {
                     "checkVersionInfo", Activity.class, Class.class, boolean.class,
                     new XC_MethodHook() {
                         @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) {
                             param.setResult(null);
-                            XposedBridge.log("FUDM_CheckVersionInfo: SUCCESS");
+                            XposedBridge.log("FUDM_AppUpData: SUCCESS");
                         }
                     }
             );
         }catch (Throwable t){
-            XposedBridge.log("FUDM_CheckVersionInfo:" + t.toString());
+            XposedBridge.log("FUDM_AppUpData:" + t.toString());
         }
     }
 
@@ -150,7 +149,7 @@ public class fucks {
                     "initView",
                     new XC_MethodHook() {
                         @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) {
                             XposedHelpers.callMethod(param.thisObject, "finish");
                             param.setResult(null);
                             XposedBridge.log("FUDM_TeenagerMode: SUCCESS");
@@ -162,13 +161,50 @@ public class fucks {
         }
     }
 
-    // 自动签到
-    public void UserSign(){
-    }
-
-
     // 阻止粘贴板被强○
    public void DoNotFuckMyClipboard() {
+        try {
+           XposedHelpers.findAndHookMethod(
+                   XposedHelpers.findClass("android.content.ClipData", classLoader),
+                   "newPlainText", CharSequence.class, CharSequence.class,
+                   new XC_MethodHook() {
+                       @Override
+                       protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                           String s = param.args[1].toString();
+                           if(!(param.args[1].toString().contains("http"))){
+                               param.args[1]="";
+                               param.setResult(null);
+                               XposedBridge.log("已阻止动漫之家乱强○粘贴板："+ s);
+                           }
+                       }
+                   }
+           );
+        }catch (Throwable t){
+            XposedBridge.log("MDZJ DoNotFuckMyClipboard_01: " + t.toString());
+        }
 
+        try{
+           XposedHelpers.findAndHookMethod(
+                   XposedHelpers.findClass("android.content.ClipboardManager", classLoader),
+                   "setText", CharSequence.class, new XC_MethodHook() {
+                       @Override
+                       protected void beforeHookedMethod(MethodHookParam param) {
+                           String s = (param.args[0]).toString();
+                           if(!(param.args[0].toString().contains("http"))){
+                               param.args[0]="";
+                               param.setResult(null);
+                               XposedBridge.log("已阻止动漫之家乱强○粘贴板："+ s);
+                           }
+                       }
+                   }
+           );
+        }catch (Throwable t){
+            XposedBridge.log("MDZJ DoNotFuckMyClipboard_02: " + t.toString());
+        }
+    }
+
+    // 自动签到
+    public void UserSign(){
+        XposedBridge.log("");
     }
 }

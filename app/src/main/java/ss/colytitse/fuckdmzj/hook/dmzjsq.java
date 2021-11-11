@@ -11,21 +11,23 @@ import ss.colytitse.fuckdmzj.MainHook;
 
 public class dmzjsq implements IXposedHookLoadPackage {
 
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                 new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    protected void beforeHookedMethod(MethodHookParam param) {
                         ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
                         try {
-                            XposedBridge.log("FUDM：已运行动漫之家社区版");
+                            XposedBridge.log("FUDM：DMZJSQ is running.");
                             fucks fk = new fucks(classLoader,MainHook.DMZJSQ_PKGN);
                             fk.fuckAdByAll();
                             fk.fuckAppUpData();
                             fk.fuckTeenagerMode();
+                            fk.UserSign();
+                            fk.DoNotFuckMyClipboard();
                         }catch (Throwable t){
-                            XposedBridge.log("FUDMSQ_ERR:"+t.toString());
+                            XposedBridge.log("FUDMSQ_ERR: "+t.toString());
                         }
                     }
                 }

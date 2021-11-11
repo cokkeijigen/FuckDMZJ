@@ -12,21 +12,23 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class dmzj implements IXposedHookLoadPackage {
 
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                 new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    protected void beforeHookedMethod(MethodHookParam param) {
                         ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
                         try {
-                            XposedBridge.log("FUDM：已运行动漫之家普通版");
+                            XposedBridge.log("FUDM：DMZJ is running.");
                             fucks fk = new fucks(classLoader,MainHook.DMZJ_PKGN);
                             fk.fuckAdByAll();
                             fk.fuckAppUpData();
                             fk.fuckTeenagerMode();
+                            fk.UserSign();
+                            fk.DoNotFuckMyClipboard();
                         }catch (Throwable t){
-                            XposedBridge.log("FUDM_ERR:"+t.toString());
+                            XposedBridge.log("FUDM_ERR: "+t.toString());
                         }
                     }
                 }
