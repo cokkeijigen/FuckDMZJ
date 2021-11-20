@@ -25,6 +25,7 @@ public class MainHook implements IXposedHookLoadPackage {
         }catch (Throwable t){
             XposedBridge.log(".\n------------------------------------------------------\n"
                     +"FUDM_MAIN_ERR: " + t.toString()+
+                    +"FUDM_MAIN: " + t.toString()+
                     "\n------------------------------------------------------\n"
             );
         }
