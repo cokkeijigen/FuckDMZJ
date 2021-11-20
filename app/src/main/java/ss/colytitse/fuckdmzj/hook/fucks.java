@@ -1,5 +1,6 @@
 package ss.colytitse.fuckdmzj.hook;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -95,9 +98,9 @@ public class fucks extends fuck {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 FrameLayout adLayout = (FrameLayout) getFieldByName(param,"adLayout");
                                 adLayout.setVisibility(View.GONE);
-                                XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
-                });}
+                });
+            }
         }catch (Throwable t){
             XposedBridge.log("FUDM_AD_findViews_01:" + t.toString());
         }

@@ -1,16 +1,21 @@
 package ss.colytitse.fuckdmzj.hook;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.MainHook;
+import ss.colytitse.fuckdmzj.R;
 
 public class dmzjsq implements IXposedHookLoadPackage {
-    
+
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
@@ -18,7 +23,8 @@ public class dmzjsq implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        ClassLoader classLoader = ((Context)param.args[0]).getClassLoader();
+                        Context mContext = (Context)param.args[0];
+                        ClassLoader classLoader = mContext.getClassLoader();
                         try {
                             XposedBridge.log("FUDM：DMZJSQ is running.");
                             fucks fk = new fucks(classLoader,MainHook.DMZJSQ_PKGN);

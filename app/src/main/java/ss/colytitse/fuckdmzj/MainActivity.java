@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
 
 public class MainActivity extends Activity {
