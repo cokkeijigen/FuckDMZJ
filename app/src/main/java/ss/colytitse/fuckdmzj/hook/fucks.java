@@ -13,24 +13,10 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import ss.colytitse.fuckdmzj.MainHook;
 
-public class fucks {
+public class fucks extends fuck {
 
-    // 对象包名
-    private static String PKGN;
-    // 类加载器
-    private static ClassLoader classLoader;
-
-    public fucks(ClassLoader classLoader, String PKGN) /* 初始化 */ {
-        fucks.classLoader = classLoader;
-        fucks.PKGN = PKGN;
-    }
-
-    // 获取字段
-    private static Object getField(XC_MethodHook.MethodHookParam param,String name) throws Throwable {
-        Class<?> clazz = param.thisObject.getClass();
-        Field field = clazz.getDeclaredField(name);
-        field.setAccessible(true);
-        return field.get(param.thisObject);
+    public fucks(ClassLoader classLoader, String PKGN){
+        super(PKGN,classLoader);
     }
 
     // 去除广告
@@ -69,6 +55,19 @@ public class fucks {
             XposedBridge.log("FUDM_RU_02: " + t.toString());
         }
 
+        try /* 规则三 */ {
+            XposedHelpers.findAndHookMethod(
+                    XposedHelpers.findClass("", classLoader), "",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                        }
+                    }
+            );
+        }catch (Throwable t){
+            XposedBridge.log("FUDM_RU_03: " + t.toString());
+        }
+
         try /* 去除小说与漫画详细页的广告位 */ {
             String[] ad_class_list = {".ui.CartoonInstructionActivity",".ui.NovelInstructionActivity"};
             for(String ad_class : ad_class_list) /* 通用方案 */{
@@ -79,7 +78,7 @@ public class fucks {
                             new XC_MethodHook() {
                                 @Override
                                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    RelativeLayout layout_ad_layout = (RelativeLayout) getField(param,"layout_ad_layout");
+                                    RelativeLayout layout_ad_layout = (RelativeLayout) getFieldByName(param,"layout_ad_layout");
                                     layout_ad_layout.setVisibility(View.GONE);
                                     XposedBridge.log("FUDM_AD_findViews_01_s1: SUCCESS");
                                 }
@@ -94,7 +93,7 @@ public class fucks {
                         new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                FrameLayout adLayout = (FrameLayout) getField(param,"adLayout");
+                                FrameLayout adLayout = (FrameLayout) getFieldByName(param,"adLayout");
                                 adLayout.setVisibility(View.GONE);
                                 XposedBridge.log("FUDM_AD_findViews_01_s2: SUCCESS");
                             }
@@ -108,7 +107,7 @@ public class fucks {
                     "findViews", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    RelativeLayout layout_container = (RelativeLayout)getField(param,"layout_container");
+                    RelativeLayout layout_container = (RelativeLayout) getFieldByName(param,"layout_container");
                     ViewGroup.LayoutParams layoutParams = layout_container.getLayoutParams();
                     layoutParams.height = 0; // 不知道为啥设置Visibility不管用，只好把控件高度设置为0
                     layout_container.setLayoutParams(layoutParams);
@@ -159,50 +158,6 @@ public class fucks {
         }
     }
 
-    // 阻止粘贴板被强○
-   public void DoNotFuckMyClipboard() {
-
-        String str = " DoNotFuckMyClipboard";
-        String logs = PKGN.equals(MainHook.DMZJ_PKGN) ? "DMZJ"+str : "DMZJSQ"+str;
-
-        try {
-           XposedHelpers.findAndHookMethod(
-                   XposedHelpers.findClass("android.content.ClipData", classLoader),
-                   "newPlainText", CharSequence.class, CharSequence.class,
-                   new XC_MethodHook() {
-                       @Override
-                       protected void beforeHookedMethod(MethodHookParam param) {
-                           String s = param.args[1].toString();
-                           if(!(param.args[1].toString().contains("http"))){
-                               param.args[1]="";
-                               param.setResult(null);
-                               XposedBridge.log(logs +": "+ s);
-                           }
-                       }
-                   }
-           );
-        }catch (Throwable t){
-            XposedBridge.log(logs +" 01 ERR: " + t.toString());
-        }
-        try{
-           XposedHelpers.findAndHookMethod(
-                   XposedHelpers.findClass("android.content.ClipboardManager", classLoader),
-                   "setText", CharSequence.class, new XC_MethodHook() {
-                       @Override
-                       protected void beforeHookedMethod(MethodHookParam param) {
-                           String s = (param.args[0]).toString();
-                           if(!(param.args[0].toString().contains("http"))){
-                               param.args[0]="";
-                               param.setResult(null);
-                               XposedBridge.log(logs +": "+ s);
-                           }
-                       }
-                   }
-           );
-        }catch (Throwable t){
-            XposedBridge.log(logs +" 02 ERR: " + t.toString());
-        }
-    }
 
     // 自动签到
     public void UserSign(){

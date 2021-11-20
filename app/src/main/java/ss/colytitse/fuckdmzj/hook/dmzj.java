@@ -14,6 +14,7 @@ public class dmzj implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
+
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                 new XC_MethodHook() {
                     @Override
@@ -25,8 +26,10 @@ public class dmzj implements IXposedHookLoadPackage {
                             fk.fuckAdByAll();
                             fk.fuckAppUpData();
                             fk.fuckTeenagerMode();
-                            fk.UserSign();
                             fk.DoNotFuckMyClipboard();
+                            fk.UserSign();
+//                            fk.ss();
+
                         }catch (Throwable t){
                             XposedBridge.log("FUDM_ERR: "+t.toString());
                         }

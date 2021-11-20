@@ -14,7 +14,7 @@ public class MainHook implements IXposedHookLoadPackage {
     public static final String DMZJSQ_PKGN = "com.dmzjsq.manhua";
 
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         try {
             if(lpparam.packageName.equals(DMZJ_PKGN))
                 /* 运行普通版 */
@@ -23,8 +23,8 @@ public class MainHook implements IXposedHookLoadPackage {
                 /* 运行社区版 */
                 new dmzjsq().handleLoadPackage(lpparam);
         }catch (Throwable t){
-            XposedBridge.log("\n\n------------------------------------------------------\n"
-                    +"FUDM_MAIN: " + t.toString()+
+            XposedBridge.log(".\n------------------------------------------------------\n"
+                    +"FUDM_MAIN_ERR: " + t.toString()+
                     "\n------------------------------------------------------\n"
             );
         }

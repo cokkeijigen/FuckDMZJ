@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "ss.colytitse.fuckdmzj",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 500,
+      "versionName": "v1.0.5",
+      "outputFile": "FuckDMZJ_v1.0.5_221838.apk"
+    }
+  ],
+  "elementType": "File"
+}

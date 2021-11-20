@@ -11,6 +11,7 @@ import ss.colytitse.fuckdmzj.MainHook;
 
 public class dmzjsq implements IXposedHookLoadPackage {
 
+    @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
@@ -24,8 +25,8 @@ public class dmzjsq implements IXposedHookLoadPackage {
                             fk.fuckAdByAll();
                             fk.fuckAppUpData();
                             fk.fuckTeenagerMode();
-                            fk.UserSign();
                             fk.DoNotFuckMyClipboard();
+                            fk.UserSign();
                         }catch (Throwable t){
                             XposedBridge.log("FUDMSQ_ERR: "+t.toString());
                         }
