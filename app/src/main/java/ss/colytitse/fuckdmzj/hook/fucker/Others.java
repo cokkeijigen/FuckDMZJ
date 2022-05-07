@@ -77,9 +77,7 @@ public class Others {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 callMethod(param.thisObject, "finish");
-                param.setResult(null);
-                XposedBridge.log("FUDM_TeenagerMode: SUCCESS");
-            }
+                param.setResult(null);            }
         };
         try {
             Class<?> TeenagerModeDialogActivity = findClass(PKGN + "_kt.ui.TeenagerModeDialogActivity", classLoader);
