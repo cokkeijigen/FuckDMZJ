@@ -45,18 +45,9 @@ public class AdService {
             }
         };
 
-        XC_MethodHook FuckloadAd = new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //Log.d(TAG, "已fuck到: " + param.thisObject.getClass().getName() +"中的loadAD");
-                param.setResult(null);
-            }
-        };
-
-        this.loadAdByAllClass(FuckloadAd);
         this.GuangGaoBean(xc_methodHook);
         this.LTUnionADPlatform(onAdCloseView);
+        this.loadAdByAllClass(xc_methodHook1);
         this.LandscapeADActivity(xc_methodHook1);
         this.PortraitADActivity(xc_methodHook1);
     }
