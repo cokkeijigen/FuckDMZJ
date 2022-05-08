@@ -58,7 +58,8 @@ public class AdLayout {
 
     private void CartoonInstructionActivity(XC_MethodHook FUCK){
         try{
-            findAndHookMethod(findClass(this.appId + ".ui.CartoonInstructionActivity", classLoader), "findViews", FUCK);
+            Class<?> CartoonInstructionActivity = findClass(this.appId + ".ui.CartoonInstructionActivity", classLoader);
+            findAndHookMethod(CartoonInstructionActivity, "findViews", FUCK);
         }catch (Throwable t){
             XposedBridge.log("FuckDMZJ -> CartoonInstructionActivity： " + t);
         }
@@ -66,7 +67,8 @@ public class AdLayout {
 
     private void NovelInstructionActivity(XC_MethodHook FUCK){
         try{
-            findAndHookMethod(findClass(this.appId + ".ui.CartoonInstructionActivity", classLoader), "findViews", FUCK);
+            Class<?> CartoonInstructionActivity = findClass(this.appId + ".ui.CartoonInstructionActivity", classLoader);
+            findAndHookMethod(CartoonInstructionActivity, "findViews", FUCK);
         }catch (Throwable t){
             XposedBridge.log("FuckDMZJ -> NovelInstructionActivity： " + t);
         }
@@ -74,7 +76,8 @@ public class AdLayout {
 
     private void CartoonDetailsView(XC_MethodHook FUCK){
         try{
-            findAndHookConstructor(this.appId + "_kt.views.custom.CartoonDetailsView", classLoader, Context.class, AttributeSet.class, int.class, FUCK);
+            Class<?> CartoonDetailsView = findClass(this.appId + "_kt.views.custom.CartoonDetailsView", classLoader);
+            findAndHookConstructor(CartoonDetailsView, Context.class, AttributeSet.class, int.class, FUCK);
         }catch (Throwable t){
             XposedBridge.log("FuckDMZJ -> CartoonDetailsView： " + t);
         }
@@ -82,7 +85,8 @@ public class AdLayout {
 
     private void NovelBrowseActivity(XC_MethodHook FUCK){
         try{
-            findAndHookMethod(this.appId + ".ui.NovelBrowseActivity", classLoader, "findViews", FUCK);
+            Class<?> NovelBrowseActivity = findClass(this.appId + ".ui.NovelBrowseActivity", classLoader);
+            findAndHookMethod(NovelBrowseActivity, "findViews", FUCK);
         }catch (Throwable t){
             XposedBridge.log("FuckDMZJ -> NovelBrowseActivity： " + t);
         }
