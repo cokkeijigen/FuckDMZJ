@@ -78,7 +78,6 @@ public class Others {
             protected void beforeHookedMethod(MethodHookParam param) {
                 callMethod(param.thisObject, "finish");
                 param.setResult(null);
-                XposedBridge.log("FUDM_TeenagerMode: SUCCESS");
             }
         };
         try {
@@ -101,7 +100,8 @@ public class Others {
                 for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*",".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"}){
                     if (inText.matches(reg)) ++isReg;
                 }
-                if (isReg == 0 || (isReg > 0 && inText.contains("http"))) return;
+                if (isReg == 0 || (isReg > 0 && inText.contains("http") &&
+                        (inText.contains("muwai.com") || inText.contains("dmzj.com")))) return;
                 param.args[0] = ClipData.newPlainText("","");
             }
         };

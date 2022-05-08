@@ -12,6 +12,7 @@ public class AdService {
 
     private final ClassLoader classLoader;
     private final String appId;
+    private final String TAG = "test_";
 
     public AdService(String appId, ClassLoader classLoader) {
         new AdLayout(appId, classLoader);
@@ -44,6 +45,16 @@ public class AdService {
             }
         };
 
+        XC_MethodHook FuckloadAd = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //Log.d(TAG, "已fuck到: " + param.thisObject.getClass().getName() +"中的loadAD");
+                param.setResult(null);
+            }
+        };
+
+        this.loadAdByAllClass(FuckloadAd);
         this.GuangGaoBean(xc_methodHook);
         this.LTUnionADPlatform(onAdCloseView);
         this.LandscapeADActivity(xc_methodHook1);
@@ -84,5 +95,25 @@ public class AdService {
         }catch (Throwable t){
             XposedBridge.log("FuckDMZJ -> PortraitADActivity： " + t);
         }
+    }
+
+    private void loadAdByAllClass(XC_MethodHook FUCK){
+        XposedBridge.hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                if (param.hasThrowable() || param.args.length != 1)return;
+                Class<?> clazz = (Class<?>)param.getResult();
+                // Log.d(TAG, "已获取到类？: "+ clazz.getName());
+                for(String Method : new String[]{"loadAD", "loadAds"}){
+                    try{
+                        findAndHookMethod(clazz, Method, FUCK);
+                    }catch (Throwable ignored){}
+                    try{
+                        findAndHookMethod(clazz, Method, int.class, FUCK);
+                    }catch (Throwable ignored){}
+                }
+            }
+        });
     }
 }
