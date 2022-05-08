@@ -77,7 +77,7 @@ public class Others {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 callMethod(param.thisObject, "finish");
-                param.setResult(null);
+                param.setResult(null);            
             }
         };
         try {
