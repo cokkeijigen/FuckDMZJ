@@ -1,9 +1,6 @@
 package ss.colytitse.fuckdmzj.hook.fucker;
 
 import static de.robv.android.xposed.XposedHelpers.*;
-
-import android.util.Log;
-
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
