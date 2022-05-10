@@ -24,31 +24,6 @@ public class dmzjsq implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
-        hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-//                if (param.hasThrowable() || param.args.length != 1) return;
-                Class<?> clazz = (Class<?>)param.getResult();
-                if (clazz.getName().contains("PackageManager"))
-                    Log.d(TAG, "找到PackageManager类");
-                try{
-                    findAndHookMethod(clazz, "getInstalledPackages", int.class, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            super.afterHookedMethod(param);
-                            List<PackageInfo> packageInfos = (List<PackageInfo>)param.getResult();
-                            for (PackageInfo i : packageInfos){
-                                Log.d(TAG, "获取到内容: " + i.packageName);
-                            }
-                        }
-                    });
-                }catch (Throwable t){
-                    Log.d(TAG, "错误！");
-                }
-            }
-        });
-
         XC_MethodHook xc_methodHook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
