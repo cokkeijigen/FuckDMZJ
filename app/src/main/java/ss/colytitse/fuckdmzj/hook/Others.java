@@ -139,7 +139,7 @@ public class Others {
         }
     }
 
-    // 关闭青少年傻逼弹窗
+    // 关闭傻逼青少年弹窗
     public static void TeenagerModeDialogActivity(String appId, ClassLoader classLoader){
         String TeenagerModeDialogActivity = appId + "_kt.ui.TeenagerModeDialogActivity";
         try {
