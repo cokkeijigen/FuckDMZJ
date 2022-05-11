@@ -5,7 +5,6 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -27,13 +26,11 @@ public class Others {
         return field.get(param.thisObject);
     }
 
-    // 获取状态高度
+    // 获取状态栏高度
     public static int getStatusBarHeight(Context context) {
-        int statusBarHeight = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0)
-            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
-        return statusBarHeight;
+        if (resourceId > 0) return context.getResources().getDimensionPixelSize(resourceId);
+        return 0;
     }
 
     // 在全部类加载器中查找类并hook
