@@ -33,7 +33,7 @@ public class Others {
         return 0;
     }
 
-    // 在全部类加载器中查找类并hook
+    // 在全部类加载器中查找并hook
     public static void inClassLoaderFindAndHook(Fucker fucker){
        hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
            @Override
