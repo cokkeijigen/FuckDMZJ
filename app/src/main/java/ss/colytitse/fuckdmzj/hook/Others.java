@@ -43,8 +43,7 @@ public class Others {
            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                super.afterHookedMethod(param);
                if (param.hasThrowable() || param.args.length != 1) return;
-               Class<?> clazz = (Class<?>) param.getResult();
-               fucker.hook(clazz);
+               fucker.hook((Class<?>) param.getResult());
            }
        });
     }
