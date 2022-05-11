@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         {
             String url = "https://github.com/cokkeijigen/FuckDMZJ";
             TextView linkinfo = findViewById(R.id.link);
-            linkinfo.setText("仓库地址：" + url);
+            linkinfo.setText(String.format("仓库地址：%s", url));
             linkinfo.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));

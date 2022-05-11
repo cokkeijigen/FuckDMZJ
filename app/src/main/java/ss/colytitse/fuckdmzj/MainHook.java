@@ -1,10 +1,17 @@
 package ss.colytitse.fuckdmzj;
 
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
+import static ss.colytitse.fuckdmzj.hook.Others.ActivityOptimization;
+import static ss.colytitse.fuckdmzj.hook.Others.AppUpDataHelper;
+import static ss.colytitse.fuckdmzj.hook.Others.DoNotFuckMyClipboard;
+import static ss.colytitse.fuckdmzj.hook.Others.TeenagerModeDialogActivity;
+
+import android.app.Application;
+import android.content.Context;
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import ss.colytitse.fuckdmzj.hook.dmzj;
-import ss.colytitse.fuckdmzj.hook.dmzjsq;
+import ss.colytitse.fuckdmzj.hook.AdService;
 
 public class MainHook implements IXposedHookLoadPackage {
 
@@ -15,20 +22,21 @@ public class MainHook implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
+        if (!(lpparam.packageName.equals(DMZJ_PKGN) || lpparam.packageName.equals(DMZJSQ_PKGN))) return;
         try {
-            if(lpparam.packageName.equals(DMZJ_PKGN))
-                /* 运行普通版 */
-                new dmzj().handleLoadPackage(lpparam);
-            if(lpparam.packageName.equals(DMZJSQ_PKGN))
-                /* 运行社区版 */
-                new dmzjsq().handleLoadPackage(lpparam);
-        }catch (Throwable t){
-            XposedBridge.log("." +
-                    "\n------------------------------------------------------\n"
-                    +"FUDM_MAIN_ERR: " + t.toString()+
-                    "\n------------------------------------------------------\n"
-            );
-        }
+            findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    ClassLoader classLoader = ((Context) param.args[0]).getClassLoader();
+                    new AdService(lpparam.packageName, classLoader);
+                    ActivityOptimization(lpparam.packageName, classLoader);
+                    AppUpDataHelper(lpparam.packageName, classLoader);
+                    TeenagerModeDialogActivity(lpparam.packageName, classLoader);
+                    DoNotFuckMyClipboard();
+                }
+            });
+        }catch (Throwable ignored){}
     }
 
 }
