@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 public class MainActivity extends Activity {
+
+    public static final String TAG = "test_";
 
     // 获取当前apk版本
     public static String getVersionName(Context context) {
@@ -27,8 +31,8 @@ public class MainActivity extends Activity {
         return null;
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override @SuppressLint("SetTextI18n")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
@@ -46,6 +50,8 @@ public class MainActivity extends Activity {
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
             });
+        }
+        {
         }
     }
 }

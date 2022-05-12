@@ -5,13 +5,20 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import androidx.annotation.RequiresApi;
+
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -27,24 +34,21 @@ public class Others {
         return field.get(param.thisObject);
     }
 
-    // 获取状态高度
+    // 获取状态栏高度
     public static int getStatusBarHeight(Context context) {
-        int statusBarHeight = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0)
-            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
-        return statusBarHeight;
+        if (resourceId > 0) return context.getResources().getDimensionPixelSize(resourceId);
+        return 0;
     }
 
-    // 在全部类加载器中查找类并hook
+    // 在全部类加载器中查找并hook
     public static void inClassLoaderFindAndHook(Fucker fucker){
        hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
            @Override
            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                super.afterHookedMethod(param);
                if (param.hasThrowable() || param.args.length != 1) return;
-               Class<?> clazz = (Class<?>) param.getResult();
-               fucker.hook(clazz);
+               fucker.hook((Class<?>) param.getResult());
            }
        });
     }
@@ -60,69 +64,158 @@ public class Others {
             }
         };
 
-        XC_MethodHook onActivityFullscreen2 = new XC_MethodHook() {
+        XC_MethodHook onNovelBrowseActivity = new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                setActivityFullscreen((Activity) param.thisObject);
-                FrameLayout framelayout = (FrameLayout) getFieldByName(param, "framelayout");
-                framelayout.setPadding(framelayout.getPaddingStart(), getStatusBarHeight((Context) param.thisObject),
-                        framelayout.getPaddingEnd(), framelayout.getPaddingBottom());
+                Activity activity = (Activity) param.thisObject;
+                setActivityFullscreen(activity);
+                View decorView = activity.getWindow().getDecorView();
+                decorView.post(() -> {
+                    if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) return;
+                    if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)) return;
+                    if (decorView.getRootWindowInsets().getDisplayCutout() == null) return;
+                    try {
+                        FrameLayout framelayout = (FrameLayout) getFieldByName(param, "framelayout");
+                        int left = framelayout.getPaddingStart();
+                        int top = getStatusBarHeight((Context) param.thisObject);
+                        int right = framelayout.getPaddingEnd();
+                        int bottom = framelayout.getPaddingBottom();
+                        framelayout.setPadding(left,top, right, bottom);
+                    } catch (Throwable ignored) {}
+                });
+            }
+        };
+
+        XC_MethodHook setStatusBar = new XC_MethodHook() {
+            @SuppressLint("InlinedApi")
+            @Override  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Activity activity = (Activity) param.thisObject;
+                Window window = activity.getWindow();
+                View decorView = window.getDecorView();
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                window.setStatusBarColor(Color.WHITE);
             }
         };
 
         // 普通版
-        if (appId.equals(DMZJ_PKGN)){
-            String LaunchInterceptorActivity = "com.dmzj.manhua.ui.LaunchInterceptorActivity";
-            try { // 启动页
-                findAndHookMethod(findClass(LaunchInterceptorActivity,classLoader),"onCreate", Bundle.class, onActivityFullscreen);
-            }catch (Throwable ignored){
-                inClassLoaderFindAndHook(clazz -> {
-                    if (!clazz.getName().equals(LaunchInterceptorActivity)) return;
-                    findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
-                });
-            }
-            String BrowseActivityAncestors = "com.dmzj.manhua.ui.BrowseActivityAncestors";
-            try { // 漫画阅读界面
-                findAndHookMethod(findClass(BrowseActivityAncestors, classLoader), "onCreate", Bundle.class, onActivityFullscreen);
-            }catch (Throwable ignored){
-                inClassLoaderFindAndHook(clazz -> {
-                    if (!clazz.getName().equals(BrowseActivityAncestors)) return;
-                    findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
-                });
-            }
-            String NovelBrowseActivity = "com.dmzj.manhua.ui.NovelBrowseActivity";
-            try { // 小说阅读界面
-                findAndHookMethod(findClass(NovelBrowseActivity, classLoader),"findViews", onActivityFullscreen2);
-            }catch (Throwable ignored){
-                inClassLoaderFindAndHook(clazz -> {
-                    if (!clazz.getName().equals(NovelBrowseActivity)) return;
-                    findAndHookMethod(clazz, "findViews", onActivityFullscreen2);
-                });
-            }
-        }
+        if (appId.equals(DMZJ_PKGN))
+            OptimizationDMZJ(classLoader, onActivityFullscreen, onNovelBrowseActivity, setStatusBar);
 
         // 社区版
-        if(appId.equals(DMZJSQ_PKGN)){
-            String BrowseActivityAncestors4 = "com.dmzjsq.manhua.ui.abc.viewpager2.BrowseActivityAncestors4";
-            try { // 漫画阅读界面
-                findAndHookMethod(findClass(BrowseActivityAncestors4, classLoader), "publicFindViews", onActivityFullscreen);
-            }catch  (Throwable ignored){
-                inClassLoaderFindAndHook(clazz -> {
-                    if (!clazz.getName().equals(BrowseActivityAncestors4)) return;
-                    findAndHookMethod(clazz, "publicFindViews", onActivityFullscreen);
-                });
-            }
-            String NovelBrowseActivity = "com.dmzjsq.manhua.ui.NovelBrowseActivity";
-            try { // 小说阅读界面
-                findAndHookMethod(findClass(NovelBrowseActivity, classLoader), "findViews", onActivityFullscreen2);
-            } catch (Throwable ignored){
-                inClassLoaderFindAndHook(clazz -> {
-                    if (!clazz.getName().equals(NovelBrowseActivity)) return;
-                    findAndHookMethod(clazz, "findViews", onActivityFullscreen2);
+        if(appId.equals(DMZJSQ_PKGN))
+            OptimizationDMZJSQ(classLoader, onActivityFullscreen, onNovelBrowseActivity, setStatusBar);
+    }
+
+    private static void foreachActivityViewList(String appId, ClassLoader classLoader,  XC_MethodHook setStatusBar){
+        for (String ClassName : new String[]{
+                ".ui.NovelInstructionActivity",".ui.NovelChapterListActivity",
+                ".ui.DownLoadEntranceActivity",".ui.SpecialDetailActivity",
+                ".ui.game.activity.GameMainActivity", ".ui.game.activity.GameDetailsActivityV3",
+                ".ui.HisPageActivity",".ui.messagecenter.activity.MessageCentterChatActivity",
+                ".ui.MineSubscribeActivity",".ui.MineReadHistoryEnActivity",
+                ".download.DownLoadManageAbstractActivity", ".ui.mine.activity.MineCommentActivity",
+                ".ui.H5Activity",".ui.CartoonClassifyFilterActivity",
+                ".ui.HisSubscribeActivity",".ui.SettingHomeActivity",
+                ".ui.messagecenter.activity.LetterShieldListActivity",
+                ".ui.SearchActivity", ".ui.SettingMobileDataActivity",
+                ".ui.SettingCartoonReadActivity",".ui.SettingNovelReadActivity",
+                ".ui.uifragment.databasefragment.SearchDataActivity"
+        }){ try{
+            findAndHookMethod(findClass(appId + ClassName, classLoader), "createContent", setStatusBar);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                    if (!clazz.getName().equals(appId + ClassName)) return;
+                    findAndHookMethod(clazz, "createContent", setStatusBar);
                 });
             }
         }
+    }
+
+    private static void OptimizationDMZJSQ(ClassLoader classLoader, XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity, XC_MethodHook setStatusBar) {
+        String BrowseActivityAncestors4 = "com.dmzjsq.manhua.ui.abc.viewpager2.BrowseActivityAncestors4";
+        try { // 漫画阅读界面
+            findAndHookMethod(findClass(BrowseActivityAncestors4, classLoader), "publicFindViews", onActivityFullscreen);
+        }catch  (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(BrowseActivityAncestors4)) return;
+                findAndHookMethod(clazz, "publicFindViews", onActivityFullscreen);
+            });
+        }
+        String NovelBrowseActivity = "com.dmzjsq.manhua.ui.NovelBrowseActivity";
+        try { // 小说阅读界面
+            findAndHookMethod(findClass(NovelBrowseActivity, classLoader), "findViews", onNovelBrowseActivity);
+        } catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(NovelBrowseActivity)) return;
+                findAndHookMethod(clazz, "findViews", onNovelBrowseActivity);
+            });
+        }
+        String ShareActivityV2 = "com.dmzjsq.manhua.ui.ShareActivityV2";
+        try { // 分享页
+            findAndHookMethod(findClass(ShareActivityV2, classLoader), "createContent", onActivityFullscreen);
+        } catch (Throwable igonred){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(ShareActivityV2)) return;
+                findAndHookMethod(clazz, "createContent", onActivityFullscreen);
+            });
+        }
+        /* ----------------状态栏优化---------------- */
+        foreachActivityViewList(DMZJSQ_PKGN, classLoader, setStatusBar);
+    }
+
+    private static void OptimizationDMZJ(ClassLoader classLoader, XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity, XC_MethodHook setStatusBar) {
+        String LaunchInterceptorActivity = "com.dmzj.manhua.ui.LaunchInterceptorActivity";
+        try { // 启动页
+            findAndHookMethod(findClass(LaunchInterceptorActivity,classLoader),"onCreate", Bundle.class, onActivityFullscreen);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(LaunchInterceptorActivity)) return;
+                findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
+            });
+        }
+        String BrowseActivityAncestors = "com.dmzj.manhua.ui.BrowseActivityAncestors";
+        try { // 漫画阅读界面
+            findAndHookMethod(findClass(BrowseActivityAncestors, classLoader), "onCreate", Bundle.class, onActivityFullscreen);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(BrowseActivityAncestors)) return;
+                findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
+            });
+        }
+        String NovelBrowseActivity = "com.dmzj.manhua.ui.NovelBrowseActivity";
+        try { // 小说阅读界面
+            findAndHookMethod(findClass(NovelBrowseActivity, classLoader),"findViews", onNovelBrowseActivity);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(NovelBrowseActivity)) return;
+                findAndHookMethod(clazz, "findViews", onNovelBrowseActivity);
+            });
+        }
+        /* ----------------状态栏优化---------------- */
+        String HomeTabsActivitys = "com.dmzj.manhua.ui.home.HomeTabsActivitys";
+        try{
+            findAndHookMethod(findClass(HomeTabsActivitys, classLoader), "onCreate", Bundle.class, setStatusBar);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(HomeTabsActivitys)) return;
+                findAndHookMethod(clazz, "onCreate", Bundle.class, setStatusBar);
+            });
+        }
+        String CartoonInstructionActivity = "com.dmzj.manhua.ui.CartoonInstructionActivity";
+        try {
+            findAndHookMethod(findClass(CartoonInstructionActivity, classLoader), "onStart", setStatusBar);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz ->{
+                if (!clazz.getName().equals(CartoonInstructionActivity)) return;
+                findAndHookMethod(clazz, "onStart", setStatusBar);
+            });
+        }
+        foreachActivityViewList(DMZJ_PKGN, classLoader, setStatusBar);
     }
 
     // 去除更新检测
@@ -139,7 +232,7 @@ public class Others {
         }
     }
 
-    // 关闭青少年傻逼弹窗
+    // 关闭傻逼青少年弹窗
     public static void TeenagerModeDialogActivity(String appId, ClassLoader classLoader){
         String TeenagerModeDialogActivity = appId + "_kt.ui.TeenagerModeDialogActivity";
         try {

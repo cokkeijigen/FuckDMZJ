@@ -1,15 +1,15 @@
 package ss.colytitse.fuckdmzj.hook;
 
 import static de.robv.android.xposed.XposedHelpers.callMethod;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.View;
 import android.view.WindowManager;
-
 import de.robv.android.xposed.XC_MethodHook;
 
 public class MethodHook {
+
+    public static final String TAG = "test_";
 
     public static XC_MethodHook beforeResultNull(){
         return new XC_MethodHook() {

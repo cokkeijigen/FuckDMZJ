@@ -5,7 +5,6 @@ import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import static ss.colytitse.fuckdmzj.hook.Others.*;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -25,6 +24,7 @@ public class AdLayout {
     private void init() {
 
         XC_MethodHook layout_ad_layout = new XC_MethodHook() {
+
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 RelativeLayout layout_ad_layout = (RelativeLayout) getFieldByName(param, "layout_ad_layout");

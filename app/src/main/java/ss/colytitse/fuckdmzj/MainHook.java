@@ -5,7 +5,6 @@ import static ss.colytitse.fuckdmzj.hook.Others.ActivityOptimization;
 import static ss.colytitse.fuckdmzj.hook.Others.AppUpDataHelper;
 import static ss.colytitse.fuckdmzj.hook.Others.DoNotFuckMyClipboard;
 import static ss.colytitse.fuckdmzj.hook.Others.TeenagerModeDialogActivity;
-
 import android.app.Application;
 import android.content.Context;
 import de.robv.android.xposed.IXposedHookLoadPackage;
