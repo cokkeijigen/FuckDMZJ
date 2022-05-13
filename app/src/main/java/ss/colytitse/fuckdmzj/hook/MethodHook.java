@@ -41,7 +41,7 @@ public class MethodHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable  {
                 super.beforeHookedMethod(param);
-                param.setResult(-1);
+                param.setResult(value);
             }
         } : new XC_MethodHook() {
             @Override

@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(
                     context.getPackageName(), 0);
-            return packageInfo.versionName;
+            return String.format("%s(%s)", packageInfo.versionName, packageInfo.versionCode);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

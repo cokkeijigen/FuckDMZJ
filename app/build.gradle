@@ -9,7 +9,7 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 700
+        versionCode 710
         versionName "v1.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
