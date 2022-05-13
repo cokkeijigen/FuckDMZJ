@@ -1,11 +1,9 @@
 package ss.colytitse.fuckdmzj.hook;
 
-import static de.robv.android.xposed.XposedBridge.*;
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import android.annotation.SuppressLint;
+import static ss.colytitse.fuckdmzj.hook.MethodHook.onSetActivityStatusBar;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,12 +12,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import androidx.annotation.RequiresApi;
-
 import java.lang.reflect.Field;
+import java.util.Arrays;
+
 import de.robv.android.xposed.XC_MethodHook;
 
 public class Others {
@@ -39,18 +35,6 @@ public class Others {
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) return context.getResources().getDimensionPixelSize(resourceId);
         return 0;
-    }
-
-    // 在全部类加载器中查找并hook
-    public static void inClassLoaderFindAndHook(Fucker fucker){
-       hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
-           @Override
-           protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-               super.afterHookedMethod(param);
-               if (param.hasThrowable() || param.args.length != 1) return;
-               fucker.hook((Class<?>) param.getResult());
-           }
-       });
     }
 
     // 界面显示优化
@@ -81,7 +65,7 @@ public class Others {
                         int top = getStatusBarHeight((Context) param.thisObject);
                         int right = framelayout.getPaddingEnd();
                         int bottom = framelayout.getPaddingBottom();
-                        framelayout.setPadding(left,top, right, bottom);
+                        framelayout.setPadding(left, top, right, bottom);
                     } catch (Throwable ignored) {}
                 });
             }
@@ -96,26 +80,17 @@ public class Others {
             OptimizationDMZJSQ(classLoader, onActivityFullscreen, onNovelBrowseActivity);
     }
 
-    private static void allActivitySetStatusBar(String appId){
+    // 状态栏优化
+    public static void allActivitySetStatusBar(String appId){
 
-        XC_MethodHook setStatusBar = new XC_MethodHook() {
-            @SuppressLint("InlinedApi")
-            @Override  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Activity activity = (Activity) param.thisObject;
-                Window window = activity.getWindow();
-                View decorView = window.getDecorView();
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                window.setStatusBarColor(Color.WHITE);
-            }
-        };
+        XC_MethodHook setStatusBar = onSetActivityStatusBar(Color.WHITE);
 
         inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().contains(appId)) return;
-            if (clazz.getName().contains("ImagePagerActivity")) return;
+            String clazzName = clazz.getName();
+            if (!clazzName.contains(appId)) return;
+            for (String ClassName : new String[]{
+                    "ImagePagerActivity", "CartoonDetailsActivityV3", "ShareActivity"
+            }) if (clazzName.contains(ClassName)) return;
             try{
                 findAndHookMethod(clazz, "onCreate", Bundle.class, setStatusBar);
                 return;
@@ -162,8 +137,6 @@ public class Others {
                 findAndHookMethod(clazz, "createContent", onActivityFullscreen);
             });
         }
-        // 状态栏优化
-        allActivitySetStatusBar(DMZJSQ_PKGN);
     }
 
     private static void OptimizationDMZJ(ClassLoader classLoader, XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity) {
@@ -196,15 +169,13 @@ public class Others {
         }
         String ShareActivity = "com.dmzj.manhua.ui.ShareActivity";
         try { // 分享页
-            findAndHookMethod(findClass(ShareActivity, classLoader),"createContent", onNovelBrowseActivity);
+            findAndHookMethod(findClass(ShareActivity, classLoader), "createContent", onSetActivityStatusBar(0x80000000));
         }catch (Throwable ignored){
             inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(ShareActivity)) return;
-                findAndHookMethod(clazz, "createContent", onNovelBrowseActivity);
+                findAndHookMethod(clazz, "createContent", onSetActivityStatusBar(0x80000000));
             });
         }
-        // 状态栏优化
-        allActivitySetStatusBar(DMZJ_PKGN);
     }
 
     // 去除更新检测

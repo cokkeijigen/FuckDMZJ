@@ -1,14 +1,12 @@
 package ss.colytitse.fuckdmzj;
 
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static ss.colytitse.fuckdmzj.hook.Others.ActivityOptimization;
-import static ss.colytitse.fuckdmzj.hook.Others.AppUpDataHelper;
-import static ss.colytitse.fuckdmzj.hook.Others.DoNotFuckMyClipboard;
-import static ss.colytitse.fuckdmzj.hook.Others.TeenagerModeDialogActivity;
+import static de.robv.android.xposed.XposedHelpers.*;
+import static ss.colytitse.fuckdmzj.hook.Others.*;
 import android.app.Application;
 import android.content.Context;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.hook.AdService;
 
@@ -29,6 +27,7 @@ public class MainHook implements IXposedHookLoadPackage {
                     super.beforeHookedMethod(param);
                     ClassLoader classLoader = ((Context) param.args[0]).getClassLoader();
                     new AdService(lpparam.packageName, classLoader);
+                    allActivitySetStatusBar(lpparam.packageName);
                     ActivityOptimization(lpparam.packageName, classLoader);
                     AppUpDataHelper(lpparam.packageName, classLoader);
                     TeenagerModeDialogActivity(lpparam.packageName, classLoader);
