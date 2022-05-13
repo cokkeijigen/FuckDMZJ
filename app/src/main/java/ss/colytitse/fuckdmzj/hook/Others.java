@@ -200,7 +200,7 @@ public class Others {
         }catch (Throwable ignored){
             inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(ShareActivity)) return;
-                findAndHookMethod(clazz, "createContent", onNovelBrowseActivity);
+                findAndHookMethod(clazz, "createContent", onActivityFullscreen);
             });
         }
         // 状态栏优化
