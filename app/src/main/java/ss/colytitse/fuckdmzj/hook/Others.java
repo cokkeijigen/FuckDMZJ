@@ -196,7 +196,7 @@ public class Others {
         }
         String ShareActivity = "com.dmzj.manhua.ui.ShareActivity";
         try { // 分享页
-            findAndHookMethod(findClass(ShareActivity, classLoader),"createContent", onNovelBrowseActivity);
+            findAndHookMethod(findClass(ShareActivity, classLoader),"createContent", onActivityFullscreen);
         }catch (Throwable ignored){
             inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(ShareActivity)) return;
