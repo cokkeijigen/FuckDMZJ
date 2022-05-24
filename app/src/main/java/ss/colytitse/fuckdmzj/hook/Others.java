@@ -237,7 +237,7 @@ public class Others {
             });
         }
     }
-
+    
     // 尝试通过移除应用列表中的指定应用信息阻止拉起第三方应用
     public static void ApplicationPackageManager(ClassLoader classLoader){
         final String[] packagename = {"com.jingdong.app.mall", "com.taobao.taobao", "com.eg.android.AlipayGphone", "com.xunmeng.pinduoduo"};
