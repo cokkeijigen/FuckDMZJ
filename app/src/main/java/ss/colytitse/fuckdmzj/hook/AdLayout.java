@@ -22,7 +22,6 @@ public class AdLayout {
     }
 
     private void init() {
-
         XC_MethodHook layout_ad_layout = new XC_MethodHook() {
 
             @Override
@@ -58,7 +57,7 @@ public class AdLayout {
     }
 
     private void CartoonInstructionActivity(XC_MethodHook FUCK){
-        String CartoonInstructionActivity = this.appId + ".ui.CartoonInstructionActivity";
+        final String CartoonInstructionActivity = this.appId + ".ui.CartoonInstructionActivity";
         try{
             findAndHookMethod(findClass(CartoonInstructionActivity, classLoader), "findViews", FUCK);
         }catch  (Throwable ignored){
@@ -70,7 +69,7 @@ public class AdLayout {
     }
 
     private void NovelInstructionActivity(XC_MethodHook FUCK){
-        String NovelInstructionActivity = this.appId + ".ui.NovelInstructionActivity";
+        final String NovelInstructionActivity = this.appId + ".ui.NovelInstructionActivity";
         try{
             findAndHookMethod(findClass(NovelInstructionActivity, classLoader), "findViews", FUCK);
         }catch  (Throwable ignored){
@@ -82,7 +81,7 @@ public class AdLayout {
     }
 
     private void CartoonDetailsView(XC_MethodHook FUCK){
-        String CartoonDetailsView = this.appId + "_kt.views.custom.CartoonDetailsView";
+        final String CartoonDetailsView = this.appId + "_kt.views.custom.CartoonDetailsView";
         try{
             findAndHookConstructor(findClass(CartoonDetailsView, classLoader), Context.class, AttributeSet.class, int.class, FUCK);
         }catch  (Throwable ignored){
@@ -94,7 +93,7 @@ public class AdLayout {
     }
 
     private void NovelBrowseActivity(XC_MethodHook FUCK){
-        String NovelBrowseActivity = this.appId + ".ui.NovelBrowseActivity";
+        final String NovelBrowseActivity = this.appId + ".ui.NovelBrowseActivity";
         try{
             findAndHookMethod(findClass(NovelBrowseActivity, classLoader), "findViews", FUCK);
         }catch (Throwable ignored){
@@ -106,7 +105,7 @@ public class AdLayout {
     }
 
     private void AdLoadingActivity(XC_MethodHook FUCK){
-        String AdLoadingActivity = this.appId + "_kt.ui.AdLoadingActivity";
+        final String AdLoadingActivity = this.appId + "_kt.ui.AdLoadingActivity";
         try{
             findAndHookMethod(findClass(AdLoadingActivity, classLoader), "addFragment", FUCK);
         }catch (Throwable ignored){

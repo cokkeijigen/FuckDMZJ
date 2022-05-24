@@ -7,12 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 public class MainActivity extends Activity {
 
@@ -31,7 +28,6 @@ public class MainActivity extends Activity {
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override @SuppressLint("SetTextI18n")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

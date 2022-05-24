@@ -1,0 +1,23 @@
+                    Executable : D:\Android\Sdk\cmake\3.18.1\bin\cmake.exe
+arguments : 
+-HF:\PROJECT\FuckDMZJ\app\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=19
+-DANDROID_PLATFORM=android-19
+-DANDROID_ABI=x86
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DANDROID_NDK=D:\Android\Sdk\ndk\21.4.7075529
+-DCMAKE_ANDROID_NDK=D:\Android\Sdk\ndk\21.4.7075529
+-DCMAKE_TOOLCHAIN_FILE=D:\Android\Sdk\ndk\21.4.7075529\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=D:\Android\Sdk\cmake\3.18.1\bin\ninja.exe
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=F:\PROJECT\FuckDMZJ\app\build\intermediates\cxx\Debug\4v4u1b2l\obj\x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=F:\PROJECT\FuckDMZJ\app\build\intermediates\cxx\Debug\4v4u1b2l\obj\x86
+-DCMAKE_BUILD_TYPE=Debug
+-BF:\PROJECT\FuckDMZJ\app\.cxx\Debug\4v4u1b2l\x86
+-GNinja
+jvmArgs : 
+
+
+                    Build command args: []
+                    Version: 2

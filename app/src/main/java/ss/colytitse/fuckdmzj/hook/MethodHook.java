@@ -2,20 +2,12 @@ package ss.colytitse.fuckdmzj.hook;
 
 import static de.robv.android.xposed.XposedBridge.hookAllMethods;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
-import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Color;
-import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
-import androidx.annotation.RequiresApi;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 
 public class MethodHook {
 
@@ -67,7 +59,7 @@ public class MethodHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                Activity activity = (Activity)param.thisObject;
+                Activity activity = (Activity) param.thisObject;
                 activity.finish();
                 param.setResult(null);
             }
@@ -75,7 +67,7 @@ public class MethodHook {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                Activity activity = (Activity)param.thisObject;
+                Activity activity = (Activity) param.thisObject;
                 activity.finish();
             }
         };
@@ -91,8 +83,7 @@ public class MethodHook {
 
     public static XC_MethodHook onSetActivityStatusBar(int Color){
         return new XC_MethodHook() {
-            @SuppressLint("InlinedApi")
-            @Override  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override @SuppressLint("InlinedApi")
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 Activity activity = (Activity) param.thisObject;

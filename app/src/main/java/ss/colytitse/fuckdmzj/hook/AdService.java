@@ -3,7 +3,6 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import static ss.colytitse.fuckdmzj.hook.Others.*;
 import de.robv.android.xposed.XC_MethodHook;
 
 public class AdService {
@@ -25,11 +24,12 @@ public class AdService {
         LandscapeADActivity(beforeResultNull());
         PortraitADActivity(beforeResultNull());
         TKBaseTKView(beforeResultNull());
+        CApplication(beforeResultNull());
 //        AllClassMethods(beforeResultNull());
     }
 
     private void GuangGaoBean(XC_MethodHook FUCK){
-        String GuangGaoBean = appId + ".bean.GuangGaoBean";
+        final String GuangGaoBean = appId + ".bean.GuangGaoBean";
         try{
             findAndHookMethod(findClass(GuangGaoBean, classLoader), "getCode", FUCK);
         }catch  (Throwable ignored){
@@ -41,7 +41,7 @@ public class AdService {
     }
 
     private void LTUnionADPlatform(XC_MethodHook FUCK){
-        String LTUnionADPlatform = appId + ".ad.adv.LTUnionADPlatform";
+        final String LTUnionADPlatform = appId + ".ad.adv.LTUnionADPlatform";
         try{
             findAndHookMethod(findClass(LTUnionADPlatform, classLoader), "LoadShowInfo", int.class, String.class, FUCK);
         }catch (Throwable ignored){
@@ -52,8 +52,20 @@ public class AdService {
         }
     }
 
+    private void CApplication(XC_MethodHook FUCK){
+        final String CApplication = appId + ".api.CApplication";
+        try{
+            findAndHookMethod(findClass(CApplication, classLoader), "initTouTiaoAd", FUCK);
+        }catch (Throwable ignored){
+            inClassLoaderFindAndHook(clazz -> {
+                if (!clazz.getName().equals(CApplication)) return;
+                findAndHookMethod(clazz, "initTouTiaoAd", FUCK);
+            });
+        }
+    }
+
     private void LandscapeADActivity(XC_MethodHook FUCK){
-        String LandscapeADActivity = "com.qq.e.ads.LandscapeADActivity";
+        final String LandscapeADActivity = "com.qq.e.ads.LandscapeADActivity";
         try{
             findAndHookConstructor(findClass(LandscapeADActivity, classLoader), FUCK);
         }catch (Throwable ignored){
@@ -65,7 +77,7 @@ public class AdService {
     }
 
     private void PortraitADActivity(XC_MethodHook FUCK){
-        String PortraitADActivity = "com.qq.e.ads.PortraitADActivity";
+        final String PortraitADActivity = "com.qq.e.ads.PortraitADActivity";
         try{
             findAndHookConstructor(findClass(PortraitADActivity, classLoader), FUCK);
         }catch  (Throwable ignored){
@@ -77,8 +89,8 @@ public class AdService {
     }
 
     private void TKBaseTKView(XC_MethodHook FUCK){
-        String[] ClassName = {"com.tachikoma.core.component.TKBase", "com.tachikoma.core.component.view.TKView"};
-        String[] MethodName = {"addEventListener", "dispatchEvent", "removeEventListener"};
+        final String[] ClassName = {"com.tachikoma.core.component.TKBase", "com.tachikoma.core.component.view.TKView"};
+        final String[] MethodName = {"addEventListener", "dispatchEvent", "removeEventListener"};
         for (String clazz : ClassName) for (String method : MethodName){
             try{
                 findAndHookMethod(findClass(clazz, classLoader), method, FUCK);
@@ -88,13 +100,7 @@ public class AdService {
 
     private void AllClassMethods(XC_MethodHook FUCK){
         inClassLoaderFindAndHook(clazz -> {
-            { // 腾讯广告
-            for (String Method : new String[]{"loadAD", "loadAds"})
-                try { findAndHookMethod(clazz, Method, FUCK); } catch (Throwable ignored) {}
-            }
-            {try { // 百度广告
-                hookAllMethods(clazz, "addEventListener", FUCK);
-            }catch (Throwable ignored){}}
+
         });
     }
 }

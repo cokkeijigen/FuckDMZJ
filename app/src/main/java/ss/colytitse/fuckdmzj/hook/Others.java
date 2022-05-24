@@ -3,20 +3,27 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import static ss.colytitse.fuckdmzj.hook.MethodHook.onSetActivityStatusBar;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+import androidx.annotation.RequiresApi;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 
 public class Others {
 
@@ -39,7 +46,6 @@ public class Others {
 
     // 界面显示优化
     public static void ActivityOptimization(String appId, ClassLoader classLoader){
-
         XC_MethodHook onActivityFullscreen = new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -76,41 +82,68 @@ public class Others {
             OptimizationDMZJ(classLoader, onActivityFullscreen, onNovelBrowseActivity);
 
         // 社区版
-        if(appId.equals(DMZJSQ_PKGN))
+        if(appId.equals(DMZJSQ_PKGN)){
             OptimizationDMZJSQ(classLoader, onActivityFullscreen, onNovelBrowseActivity);
+            LaunchInterceptorActivity(classLoader);
+        }
+    }
+
+    // 移除社区版启动页的广告"点击跳过"
+    private static void LaunchInterceptorActivity(ClassLoader classLoader) {
+        try{
+            Class<?> LaunchInterceptorActivity = findClass("com.dmzjsq.manhua.ui.LaunchInterceptorActivity", classLoader);
+            findAndHookMethod(LaunchInterceptorActivity, "createContent", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    Context context = (Context) param.thisObject;
+                    Activity activity = (Activity) param.thisObject;
+                    int resourceId = context.getResources().getIdentifier("skip_view", "id", DMZJSQ_PKGN);
+                    TextView textView = activity.findViewById(resourceId);
+                    textView.setVisibility(View.GONE);
+                }
+            });
+        }catch (Throwable ignored){}
     }
 
     // 状态栏优化
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void allActivitySetStatusBar(String appId){
-
         XC_MethodHook setStatusBar = onSetActivityStatusBar(Color.WHITE);
-
         inClassLoaderFindAndHook(clazz -> {
-            String clazzName = clazz.getName();
-            if (!clazzName.contains(appId)) return;
+            String className = clazz.getName();
+            if (!className.contains(appId)) return;
             for (String ClassName : new String[]{
                     "ImagePagerActivity", "CartoonDetailsActivityV3", "ShareActivity"
-            }) if (clazzName.contains(ClassName)) return;
+            }) if (className.contains(ClassName)) return;
+            String HookMethodName;
+            final List<String> MethodNames = Arrays.stream(clazz.getDeclaredMethods())
+                    .map(Method::getName).collect(Collectors.toList());
             try{
-                findAndHookMethod(clazz, "onCreate", Bundle.class, setStatusBar);
-                return;
+                HookMethodName = "onCreate";
+                if (MethodNames.contains(HookMethodName))
+                    findAndHookMethod(clazz, HookMethodName, Bundle.class, setStatusBar);
             }catch (Throwable ignored){}
             try{
-                findAndHookMethod(clazz, "onStart", setStatusBar);
-                return;
+                HookMethodName = "onStart";
+                if (MethodNames.contains(HookMethodName))
+                    findAndHookMethod(clazz, HookMethodName, setStatusBar);
             }catch (Throwable ignored){}
             try{
-                findAndHookMethod(clazz, "initData", setStatusBar);
-                return;
+                HookMethodName = "initData";
+                if (MethodNames.contains(HookMethodName))
+                    findAndHookMethod(clazz, HookMethodName, setStatusBar);
             }catch (Throwable ignored){}
             try{
-                findAndHookMethod(clazz, "createContent", setStatusBar);
+                HookMethodName = "createContent";
+                if (MethodNames.contains(HookMethodName))
+                    findAndHookMethod(clazz, HookMethodName, setStatusBar);
             }catch (Throwable ignored){}
         });
     }
 
     private static void OptimizationDMZJSQ(ClassLoader classLoader, XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity) {
-        String BrowseActivityAncestors4 = "com.dmzjsq.manhua.ui.abc.viewpager2.BrowseActivityAncestors4";
+        final String BrowseActivityAncestors4 = "com.dmzjsq.manhua.ui.abc.viewpager2.BrowseActivityAncestors4";
         try { // 漫画阅读界面
             findAndHookMethod(findClass(BrowseActivityAncestors4, classLoader), "publicFindViews", onActivityFullscreen);
         }catch  (Throwable ignored){
@@ -119,7 +152,7 @@ public class Others {
                 findAndHookMethod(clazz, "publicFindViews", onActivityFullscreen);
             });
         }
-        String NovelBrowseActivity = "com.dmzjsq.manhua.ui.NovelBrowseActivity";
+        final String NovelBrowseActivity = "com.dmzjsq.manhua.ui.NovelBrowseActivity";
         try { // 小说阅读界面
             findAndHookMethod(findClass(NovelBrowseActivity, classLoader), "findViews", onNovelBrowseActivity);
         } catch (Throwable ignored){
@@ -128,7 +161,7 @@ public class Others {
                 findAndHookMethod(clazz, "findViews", onNovelBrowseActivity);
             });
         }
-        String ShareActivityV2 = "com.dmzjsq.manhua.ui.ShareActivityV2";
+        final String ShareActivityV2 = "com.dmzjsq.manhua.ui.ShareActivityV2";
         try { // 分享页
             findAndHookMethod(findClass(ShareActivityV2, classLoader), "createContent", onActivityFullscreen);
         } catch (Throwable igonred){
@@ -140,7 +173,7 @@ public class Others {
     }
 
     private static void OptimizationDMZJ(ClassLoader classLoader, XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity) {
-        String LaunchInterceptorActivity = "com.dmzj.manhua.ui.LaunchInterceptorActivity";
+        final String LaunchInterceptorActivity = "com.dmzj.manhua.ui.LaunchInterceptorActivity";
         try { // 启动页
             findAndHookMethod(findClass(LaunchInterceptorActivity, classLoader),"onCreate", Bundle.class, onActivityFullscreen);
         }catch (Throwable ignored){
@@ -149,7 +182,7 @@ public class Others {
                 findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
             });
         }
-        String BrowseActivityAncestors = "com.dmzj.manhua.ui.BrowseActivityAncestors";
+        final String BrowseActivityAncestors = "com.dmzj.manhua.ui.BrowseActivityAncestors";
         try { // 漫画阅读界面
             findAndHookMethod(findClass(BrowseActivityAncestors, classLoader), "onCreate", Bundle.class, onActivityFullscreen);
         }catch (Throwable ignored){
@@ -158,7 +191,7 @@ public class Others {
                 findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFullscreen);
             });
         }
-        String NovelBrowseActivity = "com.dmzj.manhua.ui.NovelBrowseActivity";
+        final String NovelBrowseActivity = "com.dmzj.manhua.ui.NovelBrowseActivity";
         try { // 小说阅读界面
             findAndHookMethod(findClass(NovelBrowseActivity, classLoader),"findViews", onNovelBrowseActivity);
         }catch (Throwable ignored){
@@ -167,7 +200,7 @@ public class Others {
                 findAndHookMethod(clazz, "findViews", onNovelBrowseActivity);
             });
         }
-        String ShareActivity = "com.dmzj.manhua.ui.ShareActivity";
+        final String ShareActivity = "com.dmzj.manhua.ui.ShareActivity";
         try { // 分享页
             findAndHookMethod(findClass(ShareActivity, classLoader), "createContent", onSetActivityStatusBar(0x80000000));
         }catch (Throwable ignored){
@@ -180,7 +213,7 @@ public class Others {
 
     // 去除更新检测
     public static void AppUpDataHelper(String appId, ClassLoader classLoader){
-        String AppUpDataHelper = appId + ".helper.AppUpDataHelper";
+        final String AppUpDataHelper = appId + ".helper.AppUpDataHelper";
         try{
             findAndHookMethod(findClass(AppUpDataHelper, classLoader), "checkVersionInfo",
                     Activity.class, Class.class, boolean.class, beforeResultNull());
@@ -194,7 +227,7 @@ public class Others {
 
     // 关闭傻逼青少年弹窗
     public static void TeenagerModeDialogActivity(String appId, ClassLoader classLoader){
-        String TeenagerModeDialogActivity = appId + "_kt.ui.TeenagerModeDialogActivity";
+        final String TeenagerModeDialogActivity = appId + "_kt.ui.TeenagerModeDialogActivity";
         try {
             findAndHookMethod(findClass(TeenagerModeDialogActivity, classLoader), "initView", onActivityFinish(true));
         }catch  (Throwable ignored){
@@ -203,6 +236,50 @@ public class Others {
                 findAndHookMethod(clazz, "initView", onActivityFinish(true));
             });
         }
+    }
+
+    // 尝试通过移除应用列表中的指定应用信息阻止拉起第三方应用
+    public static void ApplicationPackageManager(ClassLoader classLoader){
+        final String[] packagename = {"com.jingdong.app.mall", "com.taobao.taobao", "com.eg.android.AlipayGphone", "com.xunmeng.pinduoduo"};
+        final String ApplicationPackageManager = "android.app.ApplicationPackageManager";
+        try {
+            findAndHookMethod(ApplicationPackageManager, classLoader, "getInstalledPackages", int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    @SuppressWarnings("unchecked")
+                    List<PackageInfo> packageInfos = (List<PackageInfo>) param.getResult();
+                    List<String> pkgns = Arrays.asList(packagename);
+                    for (PackageInfo packageInfo : packageInfos) {
+                        if (pkgns.contains(packageInfo.packageName)) {
+                            pkgns.remove(packageInfo.packageName);
+                            packageInfos.remove(packageInfo);
+                            if (pkgns.size() == 0) break;
+                        }
+                    }
+                    param.setResult(packageInfos);
+                }
+            });
+        }catch (Throwable ignored){}
+        try{
+            findAndHookMethod(ApplicationPackageManager, classLoader, "getInstalledApplications", int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    @SuppressWarnings("unchecked")
+                    List<ApplicationInfo> applicationInfos = (List<ApplicationInfo>) param.getResult();
+                    List<String> pkgns = Arrays.asList(packagename);
+                    for (ApplicationInfo applicationInfo : applicationInfos) {
+                        if (pkgns.contains(applicationInfo.packageName)) {
+                            pkgns.remove(applicationInfo.packageName);
+                            applicationInfos.remove(applicationInfo);
+                            if (pkgns.size() == 0) break;
+                        }
+                    }
+                    param.setResult(applicationInfos);
+                }
+            });
+        }catch (Throwable ignored){}
     }
 
     // 阻止粘贴板被强○
