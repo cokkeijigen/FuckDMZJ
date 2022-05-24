@@ -38,6 +38,7 @@ public class MainHook implements IXposedHookLoadPackage {
                     ActivityOptimization(lpparam.packageName, classLoader);
                     AppUpDataHelper(lpparam.packageName, classLoader);
                     TeenagerModeDialogActivity(lpparam.packageName, classLoader);
+                    ApplicationPackageManager(lpparam.classLoader);
                     DoNotFuckMyClipboard();
                 }
             });
