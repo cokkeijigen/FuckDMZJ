@@ -44,7 +44,7 @@ public class MainHook implements IXposedHookLoadPackage {
             });
         }catch (Throwable ignored){}
     }
-
+    
     private void test(ClassLoader classLoader) {
     }
 
