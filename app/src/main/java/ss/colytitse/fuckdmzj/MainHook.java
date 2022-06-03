@@ -91,5 +91,4 @@ public class MainHook implements IXposedHookLoadPackage {
         }catch (Throwable ignored){}
     }
 
-
 }

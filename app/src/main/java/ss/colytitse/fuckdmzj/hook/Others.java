@@ -240,7 +240,7 @@ public class Others {
                 findAndHookMethod(clazz, "initView", onActivityFinish(true));
         });
     }
-
+    
     // 尝试通过移除应用列表中的指定应用信息阻止拉起第三方应用
     public static void ApplicationPackageManager(ClassLoader classLoader){
         final List<String> packageNames = Arrays.asList(
