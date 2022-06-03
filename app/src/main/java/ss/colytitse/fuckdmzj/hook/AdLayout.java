@@ -3,11 +3,17 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
+
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import java.lang.reflect.Method;
+
 import de.robv.android.xposed.XC_MethodHook;
 
 public class AdLayout {
@@ -40,6 +46,7 @@ public class AdLayout {
         NovelInstructionActivity(layout_ad_layout);
         NovelBrowseActivity(layout_container);
         CartoonDetailsView(adLayout);
+        LaunchInterceptorActivity();
         AdLoadingActivity();
     }
 
@@ -101,6 +108,42 @@ public class AdLayout {
         else inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(AdLoadingActivity)) return;
                 findAndHookMethod(clazz, "addFragment", Fucked);
+        });
+    }
+
+    private static void LaunchInterceptorActivity() {
+        if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) return;
+        final String LaunchInterceptorActivity = "com.dmzjsq.manhua.ui.LaunchInterceptorActivity";
+        final Class<?> LaunchInterceptorActivityClass = getClazz(LaunchInterceptorActivity);
+        final XC_MethodHook Fucked = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Activity activity = (Activity) param.thisObject;
+                Class<?> thisObjectClass = param.thisObject.getClass();
+                Method goMainPage = thisObjectClass.getDeclaredMethod("goMainPage");
+                goMainPage.setAccessible(true);
+                goMainPage.invoke(param.thisObject);
+                activity.finish();
+                param.setResult(null);
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Context context = (Context) param.thisObject;
+                Activity activity = (Activity) param.thisObject;
+                int resourceId = context.getResources().getIdentifier("skip_view", "id", DMZJSQ_PKGN);
+                TextView textView = activity.findViewById(resourceId);
+                textView.setVisibility(View.GONE);
+                setActivityFullscreen(activity);
+            }
+        };
+        if (LaunchInterceptorActivityClass != null) try {
+            findAndHookMethod(LaunchInterceptorActivityClass, "createContent", Fucked);
+        } catch (Throwable ignored){}
+        else inClassLoaderFindAndHook(clazz -> {
+            if (!clazz.getName().equals("com.dmzjsq.manhua.ui.LaunchInterceptorActivity")) return;
+            findAndHookMethod(clazz, "createContent", Fucked);
         });
     }
 }

@@ -21,21 +21,6 @@ public class MethodHook {
             }
         };
 
-    public static XC_MethodHook onCallMethod(String methodName, boolean before){
-        return before ? new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
-                callMethod(param.thisObject, methodName);
-                param.setResult(null);
-            }
-        } : new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                callMethod(param.thisObject, methodName);
-            }
-        };
-    }
-
     public static <T> XC_MethodHook onSetResult(T value, boolean before){
         return before ? new XC_MethodHook() {
             @Override

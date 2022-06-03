@@ -70,29 +70,10 @@ public class Others {
         if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN))
             OptimizationDMZJ(onActivityFullscreen, onNovelBrowseActivity);
         // 社区版
-        if(TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
+        if(TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN))
             OptimizationDMZJSQ(onActivityFullscreen, onNovelBrowseActivity);
-            LaunchInterceptorActivity();
-        }
     }
 
-    // 移除社区版启动页的广告"点击跳过"
-    private static void LaunchInterceptorActivity() {
-        final Class<?> LaunchInterceptorActivityClass = getClazz("com.dmzjsq.manhua.ui.LaunchInterceptorActivity");
-        if (LaunchInterceptorActivityClass != null) try{
-            findAndHookMethod(LaunchInterceptorActivityClass, "createContent", new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    Context context = (Context) param.thisObject;
-                    Activity activity = (Activity) param.thisObject;
-                    int resourceId = context.getResources().getIdentifier("skip_view", "id", DMZJSQ_PKGN);
-                    TextView textView = activity.findViewById(resourceId);
-                    textView.setVisibility(View.GONE);
-                }
-            });
-        }catch (Throwable ignored){}
-    }
 
     // 状态栏优化
     @SuppressLint("NewApi")

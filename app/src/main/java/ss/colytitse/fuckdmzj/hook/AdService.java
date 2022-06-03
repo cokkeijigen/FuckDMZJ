@@ -9,6 +9,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+
+import java.lang.reflect.Method;
+
 import de.robv.android.xposed.XC_MethodHook;
 
 public class AdService{
@@ -44,7 +47,16 @@ public class AdService{
 
     private static void LTUnionADPlatform(){
         final String LTUnionADPlatform = TARGET_PACKAGE_NAME + ".ad.adv.LTUnionADPlatform";
-        final XC_MethodHook Fucked = onCallMethod("onAdCloseView", true);
+        final XC_MethodHook Fucked = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Class<?> thisObjectClass = param.thisObject.getClass();
+                Method onAdCloseView = thisObjectClass.getDeclaredMethod("onAdCloseView");
+                onAdCloseView.setAccessible(true);
+                onAdCloseView.invoke(param.thisObject);
+            }
+        };
         final Class<?> LTUnionADPlatformClass = getClazz(LTUnionADPlatform);
         if (LTUnionADPlatformClass != null) try{
             findAndHookMethod(LTUnionADPlatformClass, "LoadShowInfo", int.class, String.class, Fucked);
@@ -75,7 +87,6 @@ public class AdService{
                 findAndHookMethod(clazz, "initTouTiaoAd", beforeResultNull);
             });
         }
-
     }
 
     private static void LandscapeADActivity(){
