@@ -13,15 +13,13 @@ public class MethodHook {
 
     public static final String TAG = "test_";
 
-    public static XC_MethodHook beforeResultNull(){
-        return new XC_MethodHook() {
+    public static final XC_MethodHook beforeResultNull = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 param.setResult(null);
             }
         };
-    }
 
     public static XC_MethodHook onCallMethod(String methodName, boolean before){
         return before ? new XC_MethodHook() {
@@ -38,7 +36,7 @@ public class MethodHook {
         };
     }
 
-    public static XC_MethodHook onSetResult(int value, boolean before){
+    public static <T> XC_MethodHook onSetResult(T value, boolean before){
         return before ? new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable  {
@@ -104,7 +102,9 @@ public class MethodHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 if (param.hasThrowable() || param.args.length != 1) return;
-                fucker.hook((Class<?>) param.getResult());
+                try{
+                    fucker.hook((Class<?>) param.getResult());
+                }catch (Throwable ignored){}
             }
         });
     }
