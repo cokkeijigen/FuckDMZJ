@@ -7,10 +7,6 @@ import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import static ss.colytitse.fuckdmzj.hook.Others.*;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.util.Log;
-import androidx.annotation.RequiresApi;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -22,7 +18,7 @@ public class MainHook implements IXposedHookLoadPackage {
     public static final String DMZJ_PKGN = "com.dmzj.manhua";
     // 动漫之家社区版
     public static final String DMZJSQ_PKGN = "com.dmzjsq.manhua";
-
+    /* hook所需字段：类加载器、进程包名*/
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
@@ -31,14 +27,12 @@ public class MainHook implements IXposedHookLoadPackage {
     // 获取类
     public static Class<?> getClazz(String className){
         try {
-            if (APPLICATION_CLASS_LOADER != null)
-                return findClass(className, APPLICATION_CLASS_LOADER);
+            return findClass(className, APPLICATION_CLASS_LOADER);
         } catch (Throwable ignored) {}
         try {
-            if (LPPARAM_CLASS_LOADER != null)
-                return findClass(className, LPPARAM_CLASS_LOADER);
+            return findClass(className, LPPARAM_CLASS_LOADER);
         } catch (Throwable ignored) {}
-        return null;
+        return FuckerHook.getClass(className);
     }
 
     // 获取字段
@@ -52,43 +46,18 @@ public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         if (!(lpparam.packageName.equals(DMZJ_PKGN) || lpparam.packageName.equals(DMZJSQ_PKGN))) return;
-        try {
-            findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
-                @Override @RequiresApi(api = Build.VERSION_CODES.N)
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    APPLICATION_CLASS_LOADER = ((Context) param.args[0]).getClassLoader();
-                }
-            });
-        }catch (Throwable ignored){}
         LPPARAM_CLASS_LOADER = lpparam.classLoader;
         TARGET_PACKAGE_NAME = lpparam.packageName;
-
-        AdServiceInit();
-        AdLayoutInit();
-        allActivitySetStatusBar();
-        AppUpDataHelper();
-        ActivityOptimization();
-        TeenagerModeDialogActivity();
-        DoNotFuckMyClipboard();
-
-        inClassLoaderFindAndHook(clazz -> Log.d(TAG, "调用：" + clazz.getName()));
-        // test(lpparam.classLoader);
-        // ApplicationPackageManager(lpparam.classLoader);
+        findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                APPLICATION_CLASS_LOADER = ((Context) param.args[0]).getClassLoader();
+                loadAdServiceInit();
+                loadAdLayoutInit();
+                loadOthersInit();
+//                inClassLoaderFindAndHook(clazz -> XposedBridge.log("调用：" + clazz.getName()));
+            }
+        });
     }
-
-    private void test(ClassLoader classLoader) {
-        try {
-            findAndHookMethod(Intent.class, "setAction", String.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    String action = (String) param.args[0];
-                    if (action.contains("com.qq.e.comm")) Log.d(TAG, "Intent.class -> setAction: " + action);
-                    param.args[0] = action.replace("com.qq.e.comm", "a114514");
-                }
-            });
-        }catch (Throwable ignored){}
-    }
-
 }

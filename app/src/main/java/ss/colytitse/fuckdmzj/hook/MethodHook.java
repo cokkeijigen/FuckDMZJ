@@ -1,12 +1,14 @@
 package ss.colytitse.fuckdmzj.hook;
 
-import static de.robv.android.xposed.XposedBridge.hookAllMethods;
-import static de.robv.android.xposed.XposedHelpers.callMethod;
+import static de.robv.android.xposed.XposedBridge.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.annotation.RequiresApi;
 import de.robv.android.xposed.XC_MethodHook;
 
 public class MethodHook {
@@ -66,7 +68,8 @@ public class MethodHook {
 
     public static XC_MethodHook onSetActivityStatusBar(int Color){
         return new XC_MethodHook() {
-            @Override @SuppressLint("InlinedApi")
+            @SuppressLint("InlinedApi")
+            @Override  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 Activity activity = (Activity) param.thisObject;
@@ -80,21 +83,33 @@ public class MethodHook {
         };
     }
 
-    // 在全部类加载器中查找并hook
-    public static void inClassLoaderFindAndHook(Fucker fucker){
-        hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                if (param.hasThrowable() || param.args.length != 1) return;
-                try{
-                    fucker.hook((Class<?>) param.getResult());
-                }catch (Throwable ignored){}
-            }
-        });
-    }
+    public static class FuckerHook {
+        private static Class<?> thisFuckerClass;
+        // 在全部类加载器中查找并hook
+        public static void inClassLoaderFindAndHook(Fucker fucker){
+            hookAllMethods(ClassLoader.class, "loadClass", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    if (param.hasThrowable() || param.args.length != 1) return;
+                    try{
+                        fucker.hook((Class<?>) param.getResult());
+                    }catch (Throwable ignored){}
+                }
+            });
+        }
 
-    public interface Fucker{
-        void hook(Class<?> clazz);
+        public static Class<?> getClass(String clazzName){
+            inClassLoaderFindAndHook(clazz -> {
+                if (clazz.getName().equals(clazzName))
+                    thisFuckerClass = clazz;
+                else thisFuckerClass = null;
+            });
+            return thisFuckerClass;
+        }
+
+        public interface Fucker{
+            void hook(Class<?> clazz);
+        }
     }
 }

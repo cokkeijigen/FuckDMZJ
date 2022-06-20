@@ -3,20 +3,18 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
+import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
 import static ss.colytitse.fuckdmzj.MainHook.getClazz;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ViewGroup;
-
-import java.lang.reflect.Method;
-
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 
 public class AdService{
 
-    public static void AdServiceInit(){
+    public static void loadAdServiceInit(){
         // AllClassMethods();
         LandscapeADActivity();
         LTUnionADPlatform();
@@ -26,10 +24,11 @@ public class AdService{
         CApplication();
         POFactoryImpl();
         ADActivity();
+        JDAdSDK();
         JDAdSplash();
-//        TempDealUtil();
-//        NgSyCpAdHelp();
-//        TTAdSdk();
+        TempDealUtil();
+        NgSyCpAdHelp();
+        TTAdSdk();
     }
 
     private static void GuangGaoBean(){
@@ -39,10 +38,6 @@ public class AdService{
         if (GuangGaoBeanClass != null) try{
             findAndHookMethod(GuangGaoBeanClass, "getCode", Fucked);
         }catch  (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(GuangGaoBean)) return;
-            findAndHookMethod(clazz, "getCode", Fucked);
-        });
     }
 
     private static void LTUnionADPlatform(){
@@ -51,20 +46,13 @@ public class AdService{
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                Class<?> thisObjectClass = param.thisObject.getClass();
-                Method onAdCloseView = thisObjectClass.getDeclaredMethod("onAdCloseView");
-                onAdCloseView.setAccessible(true);
-                onAdCloseView.invoke(param.thisObject);
+                callMethod(param.thisObject, "onAdCloseView");
             }
         };
         final Class<?> LTUnionADPlatformClass = getClazz(LTUnionADPlatform);
         if (LTUnionADPlatformClass != null) try{
             findAndHookMethod(LTUnionADPlatformClass, "LoadShowInfo", int.class, String.class, Fucked);
         }catch (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-                if (!clazz.getName().equals(LTUnionADPlatform)) return;
-                findAndHookMethod(clazz,"LoadShowInfo", int.class, String.class, Fucked);
-            });
     }
 
     private static void CApplication(){
@@ -95,10 +83,6 @@ public class AdService{
         if (LandscapeADActivityClass != null) try{
             findAndHookConstructor(LandscapeADActivityClass, beforeResultNull);
         }catch (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(LandscapeADActivity)) return;
-            findAndHookConstructor(clazz, beforeResultNull);
-        });
     }
 
     private static void PortraitADActivity(){
@@ -107,10 +91,6 @@ public class AdService{
         if (PortraitADActivityClass != null) try{
             findAndHookConstructor(PortraitADActivityClass, beforeResultNull);
         }catch  (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(PortraitADActivity)) return;
-            findAndHookConstructor(clazz, beforeResultNull);
-        });
     }
 
     private static void TKBaseTKView(){
@@ -129,10 +109,6 @@ public class AdService{
         if (POFactoryImplClass != null) try {
             findAndHookConstructor(POFactoryImplClass, beforeResultNull);
         }catch (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(POFactoryImpl)) return;
-            findAndHookConstructor(clazz, beforeResultNull);
-        });
     }
 
     private static void ADActivity(){
@@ -141,13 +117,9 @@ public class AdService{
         if (ADActivityClass != null) try{
             findAndHookMethod(ADActivityClass, "onCreate", Bundle.class, onActivityFinish(true));
         }catch (Throwable ignored){}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(ADActivity)) return;
-            findAndHookMethod(clazz, "onCreate", Bundle.class, onActivityFinish(true));
-        });
     }
 
-    private void TempDealUtil() {
+    private static void TempDealUtil() {
         final String TempDealUtil = TARGET_PACKAGE_NAME + ".ad.adv.channels.NgAdHelper.bean.TempDealUtil";
         final String OnKpAdShowListener = TARGET_PACKAGE_NAME + "ad.adv.channels.NgAdHelper.bean.OnKpAdShowListener";
         final Class<?> TempDealUtilClass = getClazz(TempDealUtil);
@@ -158,13 +130,9 @@ public class AdService{
                     OnKpAdShowListenerClass, beforeResultNull
             );
         } catch (Throwable ignored) {}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(TempDealUtil)) return;
-            hookAllMethods(clazz, "showColdStartCp", beforeResultNull);
-        });
     }
 
-    private void NgSyCpAdHelp(){
+    private static void NgSyCpAdHelp(){
         final String NgSyCpAdHelp = TARGET_PACKAGE_NAME + ".ad.adv.channels.NgAdHelper.bean.NgSyCpAdHelp";
         final String OnCpAdListener = TARGET_PACKAGE_NAME + ".ad.adv.channels.NgAdHelper.bean.OnCpAdListener";
         final Class<?> NgSyCpAdHelpClass = getClazz(NgSyCpAdHelp);
@@ -174,60 +142,66 @@ public class AdService{
                     OnCpAdListenerClass, beforeResultNull
             );
         } catch (Throwable ignored) {}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(NgSyCpAdHelp)) return;
-            hookAllMethods(clazz, "showCpAd", beforeResultNull);
+    }
+
+    private static void JDAdSplash(){
+        final String JDAdSplash = "com.ap.android.trunk.sdk.ad.wrapper.jd.JDAdSplash";
+        final Class<?> JDAdSplashClass = getClazz(JDAdSplash);
+        if (JDAdSplashClass != null) try {
+            hookAllMethods(JDAdSplashClass, "realCreate", beforeResultNull);
+        } catch (Throwable ignored) {}
+    }
+
+    private static void JDAdSDK(){
+        final String JDAdSDK = "com.ap.android.trunk.sdk.ad.wrapper.jd.JDAdSDK";
+        final Class<?> JDAdSDKClass = getClazz(JDAdSDK);
+        if  (JDAdSDKClass != null) {
+            try {
+                hookAllMethods(JDAdSDKClass, "realInit", new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        XposedBridge.log("进入hook");
+                    }
+                });
+            } catch (Throwable ignored) {
+            }
+            try {
+                findAndHookMethod(JDAdSDKClass, "isSDKAvaliable", onSetResult(false, true));
+            } catch (Throwable ignored) {
+            }
+        }else inClassLoaderFindAndHook(clazz -> {
+            if (!clazz.getName().equals(JDAdSDK)) return;
+            XposedBridge.log("找到类" + clazz.getName());
+            try{
+                hookAllMethods(clazz, "realInit", new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        XposedBridge.log("进入hook");
+                    }
+                });
+            }catch (Exception e){
+                XposedBridge.log("错误？" + e);
+            }
         });
     }
 
-    private void TTAdSdk(){
+    private static void TTAdSdk(){
         final String TTAdSdk =  "com.bytedance.sdk.openadsdk.TTAdSdk";
         final Class<?> TTAdSdkClass = getClazz(TTAdSdk);
         if (TTAdSdkClass != null) try {
             hookAllMethods(TTAdSdkClass, "init", beforeResultNull);
         } catch (Throwable ignored) {}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(TTAdSdk)) return;
-            hookAllMethods(clazz, "init", beforeResultNull);
-        });
         TTAdConfig();
     }
 
-    private void TTAdConfig(){
+    private static void TTAdConfig(){
         final String TTAdConfig = "com.bytedance.sdk.openadsdk.TTAdConfig";
         Class<?> TTAdConfigClass = getClazz(TTAdConfig);
         if (TTAdConfigClass != null) try {
             findAndHookMethod(TTAdConfigClass, "getData", onSetResult("", true));
         } catch (Exception ignored) {}
-        else inClassLoaderFindAndHook(clazz -> {
-            if (!clazz.getName().equals(TTAdConfig)) return;
-            findAndHookMethod(clazz, "getData", onSetResult("", true));
-        });
-    }
-
-    private static void JDAdSplash(){
-        final Class<?> JDAdSplash = getClazz("com.ap.android.trunk.sdk.ad.wrapper.jd.JDAdSplash");
-        if (JDAdSplash != null) try {
-            hookAllMethods(JDAdSplash, "realCreate", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    param.setResult(null);
-                    Log.d(TAG, "狗东？？？");
-                }
-            });
-        } catch (Throwable ignored) {}
-    }
-
-    private void JDAdSDK(){
-        final Class<?> JDAdSDKClass = getClazz("com.ap.android.trunk.sdk.ad.wrapper.jd.JDAdSDK");
-        if  (JDAdSDKClass == null) return;
-        try {
-            hookAllMethods(JDAdSDKClass, "realInit", beforeResultNull);
-        } catch (Throwable ignored) {}
-        try {
-            findAndHookMethod(JDAdSDKClass, "isSDKAvaliable", onSetResult(false, true));
-        } catch (Throwable ignored) {}
     }
 
     private void AllClassMethods(){

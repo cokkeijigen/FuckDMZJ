@@ -9,17 +9,16 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 1000
-        versionName "beta-v1.0.10"
+        versionCode 1020
+        versionName "v1.0.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     android.applicationVariants.all {
-        variant ->
-            variant.outputs.all {
-                outputFileName =  /* apk命名方式：名称_版本_编译时间 */
-                        "FuckDMZJ_${variant.versionName}_${new Date().format("HHmmss", TimeZone.getTimeZone("GMT+8"))}.apk"
-            }
+        variant -> variant.outputs.all {
+            outputFileName =  /* apk命名方式：名称_版本_编译时间 */
+                    "FuckDMZJ_${variant.versionName}_${new Date().format("HHmmss", TimeZone.getTimeZone("GMT+8"))}.apk"
+        }
     }
 
     buildTypes {
