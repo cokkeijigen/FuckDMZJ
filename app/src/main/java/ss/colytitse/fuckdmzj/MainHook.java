@@ -2,15 +2,14 @@ package ss.colytitse.fuckdmzj;
 
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.hook.AdLayout.*;
-import static ss.colytitse.fuckdmzj.hook.AdService.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import static ss.colytitse.fuckdmzj.hook.Others.*;
 import android.app.Application;
 import android.content.Context;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import ss.colytitse.fuckdmzj.hook.*;
 
 public class MainHook implements IXposedHookLoadPackage {
 
@@ -22,6 +21,7 @@ public class MainHook implements IXposedHookLoadPackage {
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
+    // 日志标签
     private static final String TAG = "test_";
 
     // 获取类
@@ -53,10 +53,10 @@ public class MainHook implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 APPLICATION_CLASS_LOADER = ((Context) param.args[0]).getClassLoader();
-                loadAdServiceInit();
-                loadAdLayoutInit();
-                loadOthersInit();
-//                inClassLoaderFindAndHook(clazz -> XposedBridge.log("调用：" + clazz.getName()));
+                AdLayout.initClassHooks();
+                AdService.initClassHooks();
+                Others.initClassHooks();
+                // inClassLoaderFindAndHook(clazz -> XposedBridge.log("调用：" + clazz.getName()));
             }
         });
     }

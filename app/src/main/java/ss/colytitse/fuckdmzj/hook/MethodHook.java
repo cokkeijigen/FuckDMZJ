@@ -4,24 +4,23 @@ import static de.robv.android.xposed.XposedBridge.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 
-public class MethodHook {
+public final class MethodHook {
 
     public static final String TAG = "test_";
 
-    public static final XC_MethodHook beforeResultNull = new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(null);
-            }
-        };
+    public static final XC_MethodReplacement onReturnNull = new XC_MethodReplacement(){
+        @Override
+        protected Object replaceHookedMethod(MethodHookParam param) {
+            return null;
+        }
+    };
 
     public static <T> XC_MethodHook onSetResult(T value, boolean before){
         return before ? new XC_MethodHook() {
@@ -98,7 +97,6 @@ public class MethodHook {
                 }
             });
         }
-
         public static Class<?> getClass(String clazzName){
             inClassLoaderFindAndHook(clazz -> {
                 if (clazz.getName().equals(clazzName))
@@ -107,7 +105,6 @@ public class MethodHook {
             });
             return thisFuckerClass;
         }
-
         public interface Fucker{
             void hook(Class<?> clazz);
         }

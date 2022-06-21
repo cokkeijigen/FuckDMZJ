@@ -17,9 +17,9 @@ import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
 
-public class AdLayout {
+public final class AdLayout {
 
-    public static void loadAdLayoutInit() {
+    public static void initClassHooks() {
         InstructionActivity();
         NovelBrowseActivity();
         CartoonDetailsView();
@@ -132,7 +132,7 @@ public class AdLayout {
             findAndHookMethod(LaunchInterceptorActivityClass, "createContent", Fucked);
         } catch (Throwable ignored) {}
         try {
-            findAndHookMethod(LaunchInterceptorActivityClass, "showColdCpAd", beforeResultNull);
+            findAndHookMethod(LaunchInterceptorActivityClass, "showColdCpAd", onReturnNull);
         }catch (Throwable ignored){}
     }
 }

@@ -3,27 +3,22 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-import java.util.Arrays;
-import java.util.List;
 import de.robv.android.xposed.XC_MethodHook;
 
-public class Others {
+public final class Others {
 
     public static final String TAG = "test_";
 
-    public static void loadOthersInit(){
+    public static void initClassHooks(){
         allActivitySetStatusBar();
         AppUpDataHelper();
         ActivityOptimization();
@@ -79,12 +74,10 @@ public class Others {
             OptimizationDMZJSQ(onActivityFullscreen, onNovelBrowseActivity);
     }
 
-
     // 状态栏优化
     private static void allActivitySetStatusBar(){
         final XC_MethodHook setStatusBar = onSetActivityStatusBar(Color.WHITE);
         findAndHookMethod(Activity.class, "onCreate", Bundle.class, setStatusBar);
-
     }
 
     private static void OptimizationDMZJSQ(XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity) {
@@ -148,7 +141,7 @@ public class Others {
         final Class<?> AppUpDataHelperClass = getClazz(AppUpDataHelper);
         if (AppUpDataHelperClass != null) try {
             findAndHookMethod(AppUpDataHelperClass, "checkVersionInfo",
-                    Activity.class, Class.class, boolean.class, beforeResultNull);
+                Activity.class, Class.class, boolean.class, onReturnNull);
         } catch (Throwable ignored) {}
     }
 
@@ -160,40 +153,6 @@ public class Others {
             findAndHookMethod(TeenagerModeDialogActivityClass, "initView", onActivityFinish(true));
         } catch (Throwable ignored) {}
     }
-    
-    // 尝试通过移除应用列表中的指定应用信息阻止拉起第三方应用
-    private static void ApplicationPackageManager(ClassLoader classLoader){
-        final List<String> packageNames = Arrays.asList(
-                "com.jingdong.app.mall", "com.taobao.taobao", "com.eg.android.AlipayGphone", "com.xunmeng.pinduoduo"
-        );
-        final String ApplicationPackageManager = "android.app.ApplicationPackageManager";
-        try {
-            findAndHookMethod(ApplicationPackageManager, classLoader, "getInstalledPackages", int.class, new XC_MethodHook() {
-                @Override @SuppressLint("NewApi")
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    @SuppressWarnings("unchecked")
-                    List<PackageInfo> packageInfos = (List<PackageInfo>) param.getResult();
-                    packageInfos.stream().filter(info -> packageNames.contains(info.packageName))
-                            .forEach(packageInfos::remove);
-                    param.setResult(packageInfos);
-                }
-            });
-        }catch (Throwable ignored){}
-        try{
-            findAndHookMethod(ApplicationPackageManager, classLoader, "getInstalledApplications", int.class, new XC_MethodHook() {
-                @Override @SuppressLint("NewApi")
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    @SuppressWarnings("unchecked")
-                    List<ApplicationInfo> applicationInfos = (List<ApplicationInfo>) param.getResult();
-                    applicationInfos.stream().filter(info -> packageNames.contains(info.packageName))
-                            .forEach(applicationInfos::remove);
-                    param.setResult(applicationInfos);
-                }
-            });
-        }catch (Throwable ignored){}
-    }
 
     // 阻止剪切板被强○
     private static void DoNotFuckMyClipboard(){
@@ -203,6 +162,27 @@ public class Others {
                 super.beforeHookedMethod(param);
                 ClipData clipData = (ClipData) param.args[0];
                 String inText = clipData.getItemAt(0).getText().toString().trim();
+                class temp{
+                    private final char[] thisText;
+                    private StringBuffer text;
+                    private int count = 0;
+                    private int index = 0;
+
+                    public temp(String intext){
+                        thisText = intext.toCharArray();
+                    }
+
+                    private void init(){
+                        do{
+                            ++index;
+                        }while (!end());
+                    }
+
+                    private boolean end(){
+                        return index == thisText.length;
+                    }
+                }
+
                 int isReg = 0;
                 for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*", ".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"}){
                     if (inText.matches(reg)) ++isReg;
