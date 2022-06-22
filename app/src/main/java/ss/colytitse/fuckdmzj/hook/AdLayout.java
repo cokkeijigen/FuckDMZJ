@@ -115,7 +115,6 @@ public final class AdLayout {
                 goMainPage.setAccessible(true);
                 goMainPage.invoke(param.thisObject);
                 activity.finish();
-                param.setResult(null);
             }
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -132,7 +131,7 @@ public final class AdLayout {
             findAndHookMethod(LaunchInterceptorActivityClass, "createContent", Fucked);
         } catch (Throwable ignored) {}
         try {
-            findAndHookMethod(LaunchInterceptorActivityClass, "showColdCpAd", onReturnNull);
+            findAndHookMethod(LaunchInterceptorActivityClass, "showColdCpAd", onReturnVoid);
         }catch (Throwable ignored){}
     }
 }

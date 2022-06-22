@@ -141,7 +141,7 @@ public final class Others {
         final Class<?> AppUpDataHelperClass = getClazz(AppUpDataHelper);
         if (AppUpDataHelperClass != null) try {
             findAndHookMethod(AppUpDataHelperClass, "checkVersionInfo",
-                Activity.class, Class.class, boolean.class, onReturnNull);
+                Activity.class, Class.class, boolean.class, onReturnVoid);
         } catch (Throwable ignored) {}
     }
 
@@ -162,7 +162,7 @@ public final class Others {
                 super.beforeHookedMethod(param);
                 ClipData clipData = (ClipData) param.args[0];
                 String inText = clipData.getItemAt(0).getText().toString().trim();
-                class temp{
+                class temp{  // 在写了在写了...
                     private final char[] thisText;
                     private StringBuffer text;
                     private int count = 0;

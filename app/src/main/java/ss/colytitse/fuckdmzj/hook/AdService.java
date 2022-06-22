@@ -59,19 +59,19 @@ public final class AdService{
         final Class<?> CApplicationClass = getClazz(CApplication);
         if (CApplicationClass != null) {
             try {
-                findAndHookMethod(CApplicationClass, "initWhSdk", onReturnNull);
+                findAndHookMethod(CApplicationClass, "initWhSdk", onReturnVoid);
             } catch (Throwable ignored) {}
             try {
-                findAndHookMethod(CApplicationClass, "initTouTiaoAd", onReturnNull);
+                findAndHookMethod(CApplicationClass, "initTouTiaoAd", onReturnVoid);
             } catch (Throwable ignored) {}
         }else{
             inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(CApplication)) return;
-                findAndHookMethod(clazz, "initWhSdk", onReturnNull);
+                findAndHookMethod(clazz, "initWhSdk", onReturnVoid);
             });
             inClassLoaderFindAndHook(clazz -> {
                 if (!clazz.getName().equals(CApplication)) return;
-                findAndHookMethod(clazz, "initTouTiaoAd", onReturnNull);
+                findAndHookMethod(clazz, "initTouTiaoAd", onReturnVoid);
             });
         }
     }
@@ -80,7 +80,7 @@ public final class AdService{
         final String LandscapeADActivity = "com.qq.e.ads.LandscapeADActivity";
         final Class<?> LandscapeADActivityClass = getClazz(LandscapeADActivity);
         if (LandscapeADActivityClass != null) try{
-            findAndHookConstructor(LandscapeADActivityClass, onReturnNull);
+            findAndHookConstructor(LandscapeADActivityClass, onReturnVoid);
         }catch (Throwable ignored){}
     }
 
@@ -88,7 +88,7 @@ public final class AdService{
         final String PortraitADActivity = "com.qq.e.ads.PortraitADActivity";
         final Class<?> PortraitADActivityClass = getClazz(PortraitADActivity);
         if (PortraitADActivityClass != null) try{
-            findAndHookConstructor(PortraitADActivityClass, onReturnNull);
+            findAndHookConstructor(PortraitADActivityClass, onReturnVoid);
         }catch  (Throwable ignored){}
     }
 
@@ -97,7 +97,7 @@ public final class AdService{
         final String[] MethodName = {"addEventListener", "dispatchEvent", "removeEventListener"};
         for (String clazz : ClassName) for (String method : MethodName){
             try{
-                findAndHookMethod(getClazz(clazz), method, onReturnNull);
+                findAndHookMethod(getClazz(clazz), method, onReturnVoid);
             }catch (Throwable ignored){}
         }
     }
@@ -106,7 +106,7 @@ public final class AdService{
         final String POFactoryImpl = "com.qq.e.comm.plugin.POFactoryImpl";
         final Class<?> POFactoryImplClass = getClazz(POFactoryImpl);
         if (POFactoryImplClass != null) try {
-            findAndHookConstructor(POFactoryImplClass, onReturnNull);
+            findAndHookConstructor(POFactoryImplClass, onReturnVoid);
         }catch (Throwable ignored){}
     }
 
@@ -126,7 +126,7 @@ public final class AdService{
         if (TempDealUtilClass != null && OnKpAdShowListenerClass != null) try {
             findAndHookMethod(TempDealUtilClass,
                     "showColdStartCp", Context.class, String.class,
-                    OnKpAdShowListenerClass, onReturnNull
+                    OnKpAdShowListenerClass, onReturnVoid
             );
         } catch (Throwable ignored) {}
     }
@@ -138,7 +138,7 @@ public final class AdService{
         final Class<?> OnCpAdListenerClass = getClazz(OnCpAdListener);
         if (NgSyCpAdHelpClass != null && OnCpAdListenerClass != null) try {
             findAndHookMethod(NgSyCpAdHelpClass, "showCpAd", ViewGroup.class,
-                    OnCpAdListenerClass, onReturnNull
+                    OnCpAdListenerClass, onReturnVoid
             );
         } catch (Throwable ignored) {}
     }
@@ -147,7 +147,7 @@ public final class AdService{
         final String JDAdSplash = "com.ap.android.trunk.sdk.ad.wrapper.jd.JDAdSplash";
         final Class<?> JDAdSplashClass = getClazz(JDAdSplash);
         if (JDAdSplashClass != null) try {
-            hookAllMethods(JDAdSplashClass, "realCreate", onReturnNull);
+            hookAllMethods(JDAdSplashClass, "realCreate", onReturnVoid);
         } catch (Throwable ignored) {}
     }
 
@@ -190,7 +190,7 @@ public final class AdService{
         final String TTAdSdk =  "com.bytedance.sdk.openadsdk.TTAdSdk";
         final Class<?> TTAdSdkClass = getClazz(TTAdSdk);
         if (TTAdSdkClass != null) try {
-            hookAllMethods(TTAdSdkClass, "init", onReturnNull);
+            hookAllMethods(TTAdSdkClass, "init", onReturnVoid);
         } catch (Throwable ignored) {}
         TTAdConfig();
     }

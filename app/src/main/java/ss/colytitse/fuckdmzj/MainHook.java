@@ -5,6 +5,8 @@ import static ss.colytitse.fuckdmzj.hook.AdLayout.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
+
 import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -13,9 +15,9 @@ import ss.colytitse.fuckdmzj.hook.*;
 
 public class MainHook implements IXposedHookLoadPackage {
 
-    // 动漫之家普通版
+    // 普通版包名
     public static final String DMZJ_PKGN = "com.dmzj.manhua";
-    // 动漫之家社区版
+    // 社区版包名
     public static final String DMZJSQ_PKGN = "com.dmzjsq.manhua";
     /* hook所需字段：类加载器、进程包名*/
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
@@ -56,7 +58,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 AdLayout.initClassHooks();
                 AdService.initClassHooks();
                 Others.initClassHooks();
-                // inClassLoaderFindAndHook(clazz -> XposedBridge.log("调用：" + clazz.getName()));
+                // inClassLoaderFindAndHook(clazz -> Log.d(TAG, "调用：" + clazz.getName()));
             }
         });
     }

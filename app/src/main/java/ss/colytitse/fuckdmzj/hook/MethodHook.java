@@ -15,14 +15,14 @@ public final class MethodHook {
 
     public static final String TAG = "test_";
 
-    public static final XC_MethodReplacement onReturnNull = new XC_MethodReplacement(){
+    public static final XC_MethodReplacement onReturnVoid = new XC_MethodReplacement(){
         @Override
         protected Object replaceHookedMethod(MethodHookParam param) {
             return null;
         }
     };
 
-    public static <T> XC_MethodHook onSetResult(T value, boolean before){
+    public static <T>  XC_MethodHook onSetResult(T value, boolean before){
         return before ? new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable  {
@@ -45,7 +45,6 @@ public final class MethodHook {
                 super.beforeHookedMethod(param);
                 Activity activity = (Activity) param.thisObject;
                 activity.finish();
-                param.setResult(null);
             }
         } : new XC_MethodHook() {
             @Override
