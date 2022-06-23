@@ -42,7 +42,7 @@ public final class AdLayout {
     private static void CartoonInstructionActivity(XC_MethodHook Fucked){
         final String CartoonInstructionActivity = TARGET_PACKAGE_NAME + ".ui.CartoonInstructionActivity";
         final Class<?> CartoonInstructionActivityClass = getClazz(CartoonInstructionActivity);
-        Log.d(TAG, "CartoonInstructionActivity: " + CartoonInstructionActivity);
+        // Log.d(TAG, "CartoonInstructionActivity: " + CartoonInstructionActivity);
         try{
             findAndHookMethod(CartoonInstructionActivityClass, "findViews", Fucked);
         }catch (Throwable ignored){

@@ -9,7 +9,7 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 1101
+        versionCode 1134
         versionName "v1.0.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,5 +38,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'de.robv.android.xposed:api:82'
     implementation 'com.google.android.material:material:1.6.1'
-//    implementation("com.squareup.okhttp3:okhttp:4.9.1")
 }
