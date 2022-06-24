@@ -206,6 +206,7 @@ public final class Others {
             Class<?> RequestBuilderClass = getClazz("okhttp3.Request$Builder");
             Class<?> FormBodyBuilderClass = getClazz("okhttp3.FormBody$Builder");
             Class<?> OkHttpClientClass = getClazz("okhttp3.OkHttpClient");
+            if (RequestBuilderClass == null || FormBodyBuilderClass == null || OkHttpClientClass == null) return;
             try {
                 Object FormBodyBuilder = FormBodyBuilderClass.newInstance();
                 FormBodyBuilder = callMethod(FormBodyBuilder, "add", "token", thisUserToken);
@@ -257,15 +258,17 @@ public final class Others {
 
         public static void init(){
             Class<?> HomeTabsActivitysClass = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
-            hookAllConstructors(HomeTabsActivitysClass, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    thisActivity = (Activity) param.thisObject;
-                    initUserModelTableData();
-                    new Thread(AutoSign::onStart).start();
-                }
-            });
+            if (HomeTabsActivitysClass != null) try {
+                hookAllConstructors(HomeTabsActivitysClass, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        thisActivity = (Activity) param.thisObject;
+                        initUserModelTableData();
+                        new Thread(AutoSign::onStart).start();
+                    }
+                });
+            }catch (Throwable ignored){}
         }
 
         public static void SignInView(){
@@ -273,31 +276,35 @@ public final class Others {
             if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
                 final String MainSceneMineEnActivity = "com.dmzj.manhua.ui.home.MainSceneMineEnActivity";
                 Class<?> MainSceneMineEnActivityClass = getClazz(MainSceneMineEnActivity);
-                findAndHookMethod(MainSceneMineEnActivityClass, "ShowOrHideUm", new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        ImageView iv_my_unread_counts2 = (ImageView) getField(param, "iv_my_unread_counts2");
-                        iv_my_unread_counts2.setVisibility(View.GONE);
-                    }
-                });
+                if (MainSceneMineEnActivityClass != null) try {
+                    findAndHookMethod(MainSceneMineEnActivityClass, "ShowOrHideUm", new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            super.afterHookedMethod(param);
+                            ImageView iv_my_unread_counts2 = (ImageView) getField(param, "iv_my_unread_counts2");
+                            iv_my_unread_counts2.setVisibility(View.GONE);
+                        }
+                    });
+                } catch (Throwable ignored) {}
             }
             if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
                 final String HomeMeFragment = "com.dmzjsq.manhua_kt.ui.home.HomeMeFragment";
                 Class<?> HomeMeFragmentClass = getClazz(HomeMeFragment);
-                findAndHookMethod(HomeMeFragmentClass, "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
-                        new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                super.afterHookedMethod(param);
-                                View result = (View) param.getResult();
-                                Context context = result.getContext();
-                                int resourceId = context.getResources().getIdentifier("unread", "id", DMZJSQ_PKGN);
-                                ImageView imageView = result.findViewById(resourceId);
-                                imageView.setImageAlpha(0);
+                if (HomeMeFragmentClass != null) try {
+                    findAndHookMethod(HomeMeFragmentClass, "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
+                            new XC_MethodHook() {
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                    super.afterHookedMethod(param);
+                                    View result = (View) param.getResult();
+                                    Context context = result.getContext();
+                                    int resourceId = context.getResources().getIdentifier("unread", "id", DMZJSQ_PKGN);
+                                    ImageView imageView = result.findViewById(resourceId);
+                                    imageView.setImageAlpha(0);
+                                }
                             }
-                        }
-                );
+                    );
+                } catch (Throwable ignored) {}
             }
             // 签到页自动点击签到按钮
             final String SignInView = TARGET_PACKAGE_NAME + "_kt.views.task.SignInView";
