@@ -321,6 +321,8 @@ public final class Others {
                         super.afterHookedMethod(param);
                         TextView signInTv = (TextView) getField(param, "signInTv");
                         if (signInTv.getText().equals("立即签到")) signInTv.performClick();
+                        signInTv.setText("今日已签到");
+                        signInTv.setClickable(false);
                     }
                 });
             } catch (Throwable ignored) {}
