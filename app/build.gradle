@@ -9,8 +9,8 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 1134
-        versionName "v1.0.11"
+        versionCode 1253
+        versionName "v1.0.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

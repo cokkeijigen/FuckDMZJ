@@ -12,13 +12,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
 import java.util.stream.Collectors;
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -172,27 +175,9 @@ public final class Others {
                 super.beforeHookedMethod(param);
                 ClipData clipData = (ClipData) param.args[0];
                 String inText = clipData.getItemAt(0).getText().toString().trim();
-                class temp{  // 在写了在写了...
-                    private final char[] thisText;
-                    private StringBuffer text;
-                    private int count = 0;
-                    private int index = 0;
-
-                    public temp(String intext){
-                        thisText = intext.toCharArray();
-                    }
-
-                    private void init(){
-                        do{
-                            ++index;
-                        }while (!end());
-                    }
-
-                    private boolean end(){
-                        return index == thisText.length;
-                    }
+                class temp{
+                    // 在写了在写了...
                 }
-
                 int isReg = 0;
                 for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*", ".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"}){
                     if (inText.matches(reg)) ++isReg;
@@ -210,9 +195,6 @@ public final class Others {
     private static class AutoSign {
 
         private static @SuppressLint("StaticFieldLeak") Activity thisActivity = null;
-        private static Class<?> thisHomeTabsActivitys = null;
-        private static Class<?> thisUserModelTable = null;
-        private static Class<?> thisdmzjMD5 = null;
         private static boolean thisUserModelInit = false;
         private static String thisUserToken = null;
         private static String thisUserSign = null;
@@ -222,31 +204,8 @@ public final class Others {
         private static void onStart(){
             if (!thisUserModelInit) return;
             Class<?> RequestBuilderClass = getClazz("okhttp3.Request$Builder");
-            Class<?> OkHttpClientClass = getClazz("okhttp3.OkHttpClient");
             Class<?> FormBodyBuilderClass = getClazz("okhttp3.FormBody$Builder");
-            try {
-                Object RequestBuilder = RequestBuilderClass.newInstance();
-                RequestBuilder = callMethod(RequestBuilder, "url",
-                        /* 获取签到状态接口 */
-                        String.format("http://api.bbs.muwai.com/v1/sign/detail?uid=%s&token=%s&sign=%s&rand=%s",
-                        thisUserId, thisUserToken, thisUserSign, (new Random()).nextDouble())
-                );
-
-                Object OkHttpClient = OkHttpClientClass.newInstance();
-                Object Request = callMethod(RequestBuilder, "build");
-                Object newCall = callMethod(OkHttpClient, "newCall", Request);
-                Object Response = callMethod(newCall, "execute");
-                Object ResponseBody = callMethod(Response, "body");
-                String result = Arrays.stream(((String) callMethod(ResponseBody, "string")).split(","))
-                        .filter(e -> e.contains("is_sign"))
-                        .collect(Collectors.toList()).get(0);
-                Log.d(TAG, "SignState -> " + result);
-                if (!Objects.equals(result.split(":")[1], "0")) return;
-            } catch (Exception e) {
-                Log.d(TAG, "onStart: err-> " + e);
-                return;
-            }
-
+            Class<?> OkHttpClientClass = getClazz("okhttp3.OkHttpClient");
             try {
                 Object FormBodyBuilder = FormBodyBuilderClass.newInstance();
                 FormBodyBuilder = callMethod(FormBodyBuilder, "add", "token", thisUserToken);
@@ -267,51 +226,80 @@ public final class Others {
                 String result = Arrays.stream(((String) callMethod(ResponseBody, "string")).split(","))
                         .filter(e -> e.contains("msg"))
                         .collect(Collectors.toList()).get(0);
-                Log.d(TAG, "SignResult: " + result);
+                // Log.d(TAG, "SignResult: " + result);
+                Looper.prepare();
+                Context mContext = thisActivity.getApplicationContext();
+                result = result.replace("msg", "AutoSign")
+                        .replace("您已签到", "今日已签到！")
+                        .replace(":", " -> ")
+                        .replace("\"", "");
+                Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }catch (Exception e){
-                Log.d(TAG, "test: err-> " + e);
+                Log.d(TAG, "onStart: err-> " + e);
             }
         }
 
-        private static void InitializationUserModelTableData() {
+        private static void initUserModelTableData() {
+            Class<?> UserModelTableClass = getClazz(TARGET_PACKAGE_NAME + ".dbabst.db.UserModelTable");
+            Class<?> dmzjMD5Class = getClazz(TARGET_PACKAGE_NAME + ".utils.MD5");
             try {
-                Object UserModelTableInstance =  callStaticMethod(thisUserModelTable, "getInstance", thisActivity);
+                Object UserModelTableInstance =  callStaticMethod(UserModelTableClass, "getInstance", thisActivity);
                 Object UserModel = callMethod(UserModelTableInstance, "getActivityUser");
                 thisUserId = (String) callMethod(UserModel, "getUid");
                 thisUserToken = (String) callMethod(UserModel, "getDmzj_token");
-                thisUserSign = (String) callStaticMethod(thisdmzjMD5, "MD5Encode", thisUserToken + thisUserId + "d&m$z*j_159753twt");
-                if (thisUserId != null && thisUserToken != null && thisUserSign != null) thisUserModelInit = true;
+                thisUserSign = (String) callStaticMethod(dmzjMD5Class, "MD5Encode", thisUserToken + thisUserId + "d&m$z*j_159753twt");
+                thisUserModelInit = thisUserId != null && thisUserToken != null && thisUserSign != null;
             } catch (Exception e) {
-                Log.d(TAG, "initUserModel: err-> " + e);
+                Log.d(TAG, "initUserModelTableData: err-> " + e);
             }
-
-            /*
-            {   // 测试内容
-                Log.d(TAG, "-----------------------------InitializationUserModelTableData-----------------------------");
-                Log.d(TAG, "thisUserId: " + thisUserId);
-                Log.d(TAG, "thisUserToken: " + thisUserToken);
-                Log.d(TAG, "thisUserSign: " + thisUserSign);
-                Log.d(TAG, "thisSignStatusUrl: " + thisSignStatusUrl);
-            }
-             */
         }
 
         public static void init(){
-            thisHomeTabsActivitys = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
-            thisUserModelTable = getClazz(TARGET_PACKAGE_NAME + ".dbabst.db.UserModelTable");
-            thisdmzjMD5 = getClazz(TARGET_PACKAGE_NAME + ".utils.MD5");
-            hookAllConstructors(thisHomeTabsActivitys, new XC_MethodHook() {
+            Class<?> HomeTabsActivitysClass = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
+            hookAllConstructors(HomeTabsActivitysClass, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
                     thisActivity = (Activity) param.thisObject;
-                    InitializationUserModelTableData();
+                    initUserModelTableData();
                     new Thread(AutoSign::onStart).start();
                 }
             });
         }
 
         public static void SignInView(){
+            // 隐藏签到按钮的红点
+            if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
+                final String MainSceneMineEnActivity = "com.dmzj.manhua.ui.home.MainSceneMineEnActivity";
+                Class<?> MainSceneMineEnActivityClass = getClazz(MainSceneMineEnActivity);
+                findAndHookMethod(MainSceneMineEnActivityClass, "ShowOrHideUm", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        ImageView iv_my_unread_counts2 = (ImageView) getField(param, "iv_my_unread_counts2");
+                        iv_my_unread_counts2.setVisibility(View.GONE);
+                    }
+                });
+            }
+            if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
+                final String HomeMeFragment = "com.dmzjsq.manhua_kt.ui.home.HomeMeFragment";
+                Class<?> HomeMeFragmentClass = getClazz(HomeMeFragment);
+                findAndHookMethod(HomeMeFragmentClass, "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
+                        new XC_MethodHook() {
+                            @Override
+                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                super.afterHookedMethod(param);
+                                View result = (View) param.getResult();
+                                Context context = result.getContext();
+                                int resourceId = context.getResources().getIdentifier("unread", "id", DMZJSQ_PKGN);
+                                ImageView imageView = result.findViewById(resourceId);
+                                imageView.setImageAlpha(0);
+                            }
+                        }
+                );
+            }
+            // 签到页自动点击签到按钮
             final String SignInView = TARGET_PACKAGE_NAME + "_kt.views.task.SignInView";
             Class<?> SignInViewClass = getClazz(SignInView);
             if (SignInViewClass != null) try {
@@ -321,6 +309,8 @@ public final class Others {
                         super.afterHookedMethod(param);
                         TextView signInTv = (TextView) getField(param, "signInTv");
                         if (signInTv.getText().equals("立即签到")) signInTv.performClick();
+                        signInTv.setText("今日已签到");
+                        signInTv.setClickable(false);
                     }
                 });
             } catch (Throwable ignored) {}

@@ -1,14 +1,9 @@
 package ss.colytitse.fuckdmzj;
 
 import static de.robv.android.xposed.XposedHelpers.*;
-import static ss.colytitse.fuckdmzj.hook.AdLayout.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.inClassLoaderFindAndHook;
-
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
-
 import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -58,7 +53,7 @@ public class MainHook implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 APPLICATION_CLASS_LOADER = ((Context) param.args[0]).getClassLoader();
-                // inClassLoaderFindAndHook(clazz -> Log.d(TAG, "调用：" + clazz.getName()));
+                 // inClassLoaderFindAndHook(clazz -> Log.d(TAG, "调用：" + clazz.getName()));
                 AdLayout.initClassHooks();
                 AdService.initClassHooks();
                 Others.initClassHooks();

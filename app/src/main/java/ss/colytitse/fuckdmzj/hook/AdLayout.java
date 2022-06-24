@@ -7,14 +7,11 @@ import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.lang.reflect.Method;
-
 import de.robv.android.xposed.XC_MethodHook;
 
 public final class AdLayout {
@@ -82,8 +79,7 @@ public final class AdLayout {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 RelativeLayout layout_container = (RelativeLayout) getField(param, "layout_container");
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)layout_container.getLayoutParams();
-                layoutParams.height = 0;
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(0, 0);
                 layout_container.setLayoutParams(layoutParams);
             }
         };
