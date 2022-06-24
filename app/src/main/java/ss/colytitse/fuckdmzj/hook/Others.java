@@ -229,12 +229,8 @@ public final class Others {
                         .collect(Collectors.toList()).get(0);
                 // Log.d(TAG, "SignResult: " + result);
                 Looper.prepare();
-                Context mContext = thisActivity.getApplicationContext();
-                result = result.replace("msg", "AutoSign")
-                        .replace("您已签到", "今日已签到！")
-                        .replace(":", " -> ")
-                        .replace("\"", "");
-                Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
+                result = "-- AutoSignInfo --\n" + result.split(":")[1].replace("您已签到", "今日已签到");
+                Toast.makeText(thisActivity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }catch (Exception e){
                 Log.d(TAG, "onStart: err-> " + e);
