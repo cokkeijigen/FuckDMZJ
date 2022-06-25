@@ -200,6 +200,6 @@ public final class AdService{
         Class<?> TTAdConfigClass = getClazz(TTAdConfig);
         if (TTAdConfigClass != null) try {
             findAndHookMethod(TTAdConfigClass, "getData", onSetResult("", true));
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
     }
 }

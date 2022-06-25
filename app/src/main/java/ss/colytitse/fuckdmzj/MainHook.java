@@ -16,7 +16,7 @@ public class MainHook implements IXposedHookLoadPackage {
     public static final String DMZJ_PKGN = "com.dmzj.manhua";
     // 社区版包名
     public static final String DMZJSQ_PKGN = "com.dmzjsq.manhua";
-    /* hook所需字段：类加载器、进程包名*/
+    /* hook所需字段：类加载器、进程包名 */
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
@@ -53,7 +53,7 @@ public class MainHook implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 APPLICATION_CLASS_LOADER = ((Context) param.args[0]).getClassLoader();
-                 // inClassLoaderFindAndHook(clazz -> Log.d(TAG, "调用：" + clazz.getName()));
+                 // inClassLoaderFindAndHook(clazz -> Log.d(TAG, "已加载：" + clazz.getName()));
                 AdLayout.initClassHooks();
                 AdService.initClassHooks();
                 Others.initClassHooks();

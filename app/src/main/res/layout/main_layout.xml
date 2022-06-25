@@ -1,50 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
-
+    android:background="@color/main_color"
+    android:orientation="vertical"
+    tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml,HardcodedText,ContentDescription">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="201dp"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:layout_height="100dp"
+        tools:ignore="UseCompoundDrawables,UselessParent">
         <TextView
-            android:id="@+id/versionName"
             android:layout_width="match_parent"
-            android:layout_height="114dp"
-            android:background="#EAEAEA"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/link"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:gravity="center" />
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/app_name"
+            android:textColor="@color/toolbar_title"
+            android:background="@drawable/info_background_2"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
     </LinearLayout>
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="300dp"
-            android:layout_height="215dp"
-            android:src="@drawable/main_icon" />
-
-        <TextView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="哈？用户界面是什么？"
-            android:textColor="#000000"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_height="match_parent"
+            tools:ignore="ScrollViewSize">
+            <ImageView
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="100dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/info_background_1"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/info_background_2"
+                android:layout_height="match_parent">
+                <TextView
+                    android:text="模块信息"
+                    android:textColor="@color/text"
+                    android:paddingStart="10dp"
+                    android:gravity="center|start"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/info_background_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:lineSpacingExtra="5dp"
+                    android:id="@+id/version_name"
+                    android:textColor="@color/text_2"
+                    android:textStyle="bold"
+                    android:padding="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="○ 当前版本：%s"
+                    android:textSize="15sp" />
+                <ImageView
+                    android:background="#CACACA"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_height="1dp">
+                </ImageView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@color/text_2"
+                    android:textStyle="bold"
+                    android:padding="10dp"
+                    android:id="@+id/dmzjinstall"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="○ 已安装：%s"
+                    android:textSize="15sp" />
+                <ImageView
+                    android:background="#CACACA"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_height="1dp">
+                </ImageView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@color/text_2"
+                    android:textStyle="bold"
+                    android:lineHeight="30dp"
+                    android:padding="10dp"
+                    android:id="@+id/support_items"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="目前支持功能：\n%s"
+                    android:textSize="15sp"
+                    tools:ignore="UnusedAttribute" />
+            </LinearLayout>
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/info_background_2"
+                android:layout_height="match_parent">
+                <TextView
+                    android:text="关于"
+                    android:textColor="@color/text"
+                    android:paddingStart="10dp"
+                    android:gravity="center|start"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/info_background_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"/>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:lineSpacingExtra="5dp"
+                    android:padding="10dp"
+                    android:text="-| By cokkeijigen - GitHub |-"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:onClick="openGitHub"
+                    android:src="@drawable/kyaru"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

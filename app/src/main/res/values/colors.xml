@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="main_color">#FFFFFF</color>
+    <color name="toolbar_title">#000000</color>
+    <color name="text">#000000</color>
+    <color name="text_2">#212121</color>
+    <color name="statusBarColor">@color/main_color</color>
+    <color name="main_text_color">#3F4245</color>
 </resources>

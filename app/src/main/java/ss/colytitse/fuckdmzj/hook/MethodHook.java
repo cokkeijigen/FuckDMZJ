@@ -98,8 +98,7 @@ public final class MethodHook {
         }
         public static Class<?> getClass(String clazzName){
             inClassLoaderFindAndHook(clazz -> {
-                if (clazz.getName().equals(clazzName))
-                    thisFuckerClass = clazz;
+                if (clazz.getName().equals(clazzName)) thisFuckerClass = clazz;
                 else thisFuckerClass = null;
             });
             return thisFuckerClass;

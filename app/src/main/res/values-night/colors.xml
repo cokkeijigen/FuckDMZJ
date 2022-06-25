@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="toolbar_title">#FFFFFF</color>
+    <color name="text">#FFFFFF</color>
+    <color name="statusBarColor">@color/main_color</color>
+    <color name="main_color">#212121</color>
+    <color name="text_2">#FFFFFF</color>
+    <color name="main_text_color">#FFFFFF</color>
+</resources>

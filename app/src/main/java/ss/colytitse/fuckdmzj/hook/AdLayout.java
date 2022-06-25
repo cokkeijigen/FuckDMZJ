@@ -3,7 +3,6 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -39,15 +38,9 @@ public final class AdLayout {
     private static void CartoonInstructionActivity(XC_MethodHook Fucked){
         final String CartoonInstructionActivity = TARGET_PACKAGE_NAME + ".ui.CartoonInstructionActivity";
         final Class<?> CartoonInstructionActivityClass = getClazz(CartoonInstructionActivity);
-        // Log.d(TAG, "CartoonInstructionActivity: " + CartoonInstructionActivity);
-        try{
+        if (CartoonInstructionActivityClass != null) try{
             findAndHookMethod(CartoonInstructionActivityClass, "findViews", Fucked);
-        }catch (Throwable ignored){
-            inClassLoaderFindAndHook(clazz -> {
-                if (!clazz.getName().equals(CartoonInstructionActivity)) return;
-                findAndHookMethod(clazz, "findViews", Fucked);
-            });
-        }
+        }catch (Throwable ignored){}
     }
 
     private static void NovelInstructionActivity(XC_MethodHook Fucked){
