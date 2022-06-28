@@ -20,8 +20,6 @@ public class MainHook implements IXposedHookLoadPackage {
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
-    // 日志标签
-    private static final String TAG = "test_";
 
     // 获取类
     public static Class<?> getClazz(String className){

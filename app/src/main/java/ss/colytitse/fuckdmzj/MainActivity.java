@@ -1,9 +1,8 @@
 package ss.colytitse.fuckdmzj;
 
+import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
-
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -13,8 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import java.io.BufferedReader;
@@ -25,25 +22,16 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends Activity {
 
-    public static final String TAG = "test_";
-
-    // 获取当前apk版本
+    // 获取当前版本
     public String getVersionName() {
         try {
             PackageManager packageManager = getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
             return String.format("%s(%s)", packageInfo.versionName, packageInfo.versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, "getVersionName: err-> " + e);
+            return null;
         }
-        return null;
-    }
-
-    @SuppressLint("InlinedApi")
-    public void setActivityStatusBar(){
-        this.getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
-        if(this.getApplicationContext().getResources().getConfiguration().uiMode == 0x11)
-            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
     @Override
@@ -51,8 +39,12 @@ public class MainActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        setActivityStatusBar();
-        {
+        {   // 设置状态栏样式
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
+            if(getApplicationContext().getResources().getConfiguration().uiMode == 0x11)
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+        {   // 设置功能支持列表
             TextView AppVersionName = findViewById(R.id.version_name);
             AppVersionName.setText(String.format((String) AppVersionName.getText(), getVersionName()));
             TextView SupportItems = findViewById(R.id.support_items);
@@ -66,7 +58,7 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "setSupportItems: err - >" + e);
             }
         }
-        {
+        {   // 设置已安装状态
             @SuppressLint("QueryPermissionsNeeded")
             List<PackageInfo> allAppList = getPackageManager().getInstalledPackages(0);
             List<String> dmzj = allAppList.stream().filter(e -> e.packageName.contains("dmzj"))

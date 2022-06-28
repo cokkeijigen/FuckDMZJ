@@ -1,7 +1,7 @@
 package ss.colytitse.fuckdmzj.test;
 
+import static ss.colytitse.fuckdmzj.test.PublicContent.TAG;
 import static ss.colytitse.fuckdmzj.MainHook.DMZJ_PKGN;
-import static ss.colytitse.fuckdmzj.hook.Others.*;
 import android.annotation.SuppressLint;
 import android.util.Log;
 import java.lang.reflect.Method;
@@ -13,8 +13,7 @@ import de.robv.android.xposed.XposedBridge;
 public class printStackTrace {
 
     @SuppressLint("NewApi")
-    public static void setStackTracePrint(String clazzName){
-        Log.d(TAG, "ClazzName: " + clazzName);
+    public static void setStackTracePrint(){
         StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         Log.d(TAG, "#############################[start]#############################");
         Arrays.stream(stackTraceElement).forEach(stack -> Log.d(TAG,

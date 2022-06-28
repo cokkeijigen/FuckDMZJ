@@ -13,8 +13,6 @@ import de.robv.android.xposed.XC_MethodReplacement;
 
 public final class MethodHook {
 
-    public static final String TAG = "test_";
-
     public static final XC_MethodReplacement onReturnVoid = new XC_MethodReplacement(){
         @Override
         protected Object replaceHookedMethod(MethodHookParam param) {

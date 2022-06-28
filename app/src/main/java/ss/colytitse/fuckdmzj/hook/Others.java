@@ -1,10 +1,8 @@
 package ss.colytitse.fuckdmzj.hook;
 
-import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -12,31 +10,20 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import de.robv.android.xposed.XC_MethodHook;
 
 public final class Others {
 
-    public static final String TAG = "test_";
-
     public static void initClassHooks(){
-        allActivitySetStatusBar();
-        AppUpDataHelper();
-        ActivityOptimization();
+        UserAutoSign.init();
+        UserAutoSign.SignInView();
         TeenagerModeDialogActivity();
+        allActivitySetStatusBar();
+        ActivityOptimization();
         DoNotFuckMyClipboard();
-        AutoSign.SignInView();
-        AutoSign.init();
+        AppUpDataHelper();
     }
 
     // 获取状态栏高度
@@ -190,134 +177,5 @@ public final class Others {
         try {
             findAndHookMethod(ClipboardManager.class, "setPrimaryClip", ClipData.class, setPrimaryClip);
         }catch  (Throwable ignored){}
-    }
-
-    // 自动签到
-    private static class AutoSign {
-
-        private static @SuppressLint("StaticFieldLeak") Activity thisActivity = null;
-        private static boolean thisUserModelInit = false;
-        private static String thisUserToken = null;
-        private static String thisUserSign = null;
-        private static String thisUserId = null;
-
-        @SuppressLint("NewApi")
-        private static void onStart(){
-            if (!thisUserModelInit) return;
-            Class<?> RequestBuilderClass = getClazz("okhttp3.Request$Builder");
-            Class<?> FormBodyBuilderClass = getClazz("okhttp3.FormBody$Builder");
-            Class<?> OkHttpClientClass = getClazz("okhttp3.OkHttpClient");
-            if (RequestBuilderClass == null || FormBodyBuilderClass == null || OkHttpClientClass == null) return;
-            try {
-                Object FormBodyBuilder = FormBodyBuilderClass.newInstance();
-                FormBodyBuilder = callMethod(FormBodyBuilder, "add", "token", thisUserToken);
-                FormBodyBuilder = callMethod(FormBodyBuilder, "add", "sign", thisUserSign);
-                FormBodyBuilder = callMethod(FormBodyBuilder, "add", "uid", thisUserId);
-                Object FormBody = callMethod(FormBodyBuilder, "build");
-
-                Object RequestBuilder = RequestBuilderClass.newInstance();
-                RequestBuilder = callMethod(RequestBuilder, "url", /* 签到接口 */"http://api.bbs.muwai.com/v1/sign/add");
-                RequestBuilder = callMethod(RequestBuilder, "post", FormBody);
-                Object Request = callMethod(RequestBuilder, "build");
-
-                Object OkHttpClient = OkHttpClientClass.newInstance();
-                Object newCall = callMethod(OkHttpClient, "newCall", Request);
-                Object Response = callMethod(newCall, "execute");
-                Object ResponseBody = callMethod(Response, "body");
-
-                String result = Arrays.stream(((String) callMethod(ResponseBody, "string")).split(","))
-                        .filter(e -> e.contains("msg"))
-                        .collect(Collectors.toList()).get(0);
-                // Log.d(TAG, "SignResult: " + result);
-                Looper.prepare();
-                result = "-- AutoSignInfo --\n" + result.split(":")[1].replace("您已签到", "今日已签到");
-                Toast.makeText(thisActivity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }catch (Exception e){
-                Log.d(TAG, "onStart: err-> " + e);
-            }
-        }
-
-        private static void initUserModelTableData() {
-            Class<?> UserModelTableClass = getClazz(TARGET_PACKAGE_NAME + ".dbabst.db.UserModelTable");
-            Class<?> dmzjMD5Class = getClazz(TARGET_PACKAGE_NAME + ".utils.MD5");
-            try {
-                Object UserModelTableInstance =  callStaticMethod(UserModelTableClass, "getInstance", thisActivity);
-                Object UserModel = callMethod(UserModelTableInstance, "getActivityUser");
-                thisUserId = (String) callMethod(UserModel, "getUid");
-                thisUserToken = (String) callMethod(UserModel, "getDmzj_token");
-                thisUserSign = (String) callStaticMethod(dmzjMD5Class, "MD5Encode", thisUserToken + thisUserId + "d&m$z*j_159753twt");
-                thisUserModelInit = thisUserId != null && thisUserToken != null && thisUserSign != null;
-            } catch (Exception e) {
-                Log.d(TAG, "initUserModelTableData: err-> " + e);
-            }
-        }
-
-        public static void init(){
-            Class<?> HomeTabsActivitysClass = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
-            if (HomeTabsActivitysClass != null) try {
-                hookAllConstructors(HomeTabsActivitysClass, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        thisActivity = (Activity) param.thisObject;
-                        initUserModelTableData();
-                        new Thread(AutoSign::onStart).start();
-                    }
-                });
-            }catch (Throwable ignored){}
-        }
-
-        public static void SignInView(){
-            // 隐藏签到按钮的红点
-            if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
-                final String MainSceneMineEnActivity = "com.dmzj.manhua.ui.home.MainSceneMineEnActivity";
-                Class<?> MainSceneMineEnActivityClass = getClazz(MainSceneMineEnActivity);
-                if (MainSceneMineEnActivityClass != null) try {
-                    findAndHookMethod(MainSceneMineEnActivityClass, "ShowOrHideUm", new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            super.afterHookedMethod(param);
-                            ImageView iv_my_unread_counts2 = (ImageView) getField(param, "iv_my_unread_counts2");
-                            iv_my_unread_counts2.setVisibility(View.GONE);
-                        }
-                    });
-                } catch (Throwable ignored) {}
-            }
-            if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
-                final String HomeMeFragment = "com.dmzjsq.manhua_kt.ui.home.HomeMeFragment";
-                Class<?> HomeMeFragmentClass = getClazz(HomeMeFragment);
-                if (HomeMeFragmentClass != null) try {
-                    findAndHookMethod(HomeMeFragmentClass, "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
-                            new XC_MethodHook() {
-                                @Override
-                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.afterHookedMethod(param);
-                                    View result = (View) param.getResult();
-                                    Context context = result.getContext();
-                                    int resourceId = context.getResources().getIdentifier("unread", "id", DMZJSQ_PKGN);
-                                    ImageView imageView = result.findViewById(resourceId);
-                                    imageView.setImageAlpha(0);
-                                }
-                            }
-                    );
-                } catch (Throwable ignored) {}
-            }
-            // 签到页自动点击签到按钮
-            final String SignInView = TARGET_PACKAGE_NAME + "_kt.views.task.SignInView";
-            Class<?> SignInViewClass = getClazz(SignInView);
-            if (SignInViewClass != null) try {
-                hookAllMethods(SignInViewClass, "setDaySignTask", new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        TextView signInTv = (TextView) getField(param, "signInTv");
-                        if (signInTv.getText().equals("立即签到")) signInTv.performClick();
-                        signInTv.setText("今日已签到");
-                        signInTv.setClickable(false);
-                    }
-                });
-            } catch (Throwable ignored) {}
-        }
     }
 }
