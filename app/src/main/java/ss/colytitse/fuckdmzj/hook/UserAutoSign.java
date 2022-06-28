@@ -121,13 +121,17 @@ public final class UserAutoSign {
     }
 
     private static void showTost(String text, int count){
-        Context mContext = thisActivity.getApplicationContext();
-        Toast.makeText(
-                mContext, String.format("-- AutoSignInfo --\n%s", text), Toast.LENGTH_SHORT
-        ).show();
-        if (count != -1) Toast.makeText(
-                mContext, String.format("已连续签到： %s 天", count), Toast.LENGTH_SHORT
-        ).show();
+        new Thread(()->{
+            Looper.prepare();
+            Context mContext = thisActivity.getApplicationContext();
+            Toast.makeText(
+                    mContext, String.format("-- AutoSignInfo --\n%s", text), Toast.LENGTH_SHORT
+            ).show();
+            if (count != -1) Toast.makeText(
+                    mContext, String.format("已连续签到： %s 天", count), Toast.LENGTH_SHORT
+            ).show();
+            Looper.loop();
+        }).start();
     }
 
     private static List<String> onDaysTask(){
@@ -161,7 +165,6 @@ public final class UserAutoSign {
 
     private static void onStart() {
         if (!thisUserModelInit) return;
-        Looper.prepare();
         try{
             user before = new user();       // 签到前数据;
             if(OkHttp.init()) {
@@ -192,7 +195,6 @@ public final class UserAutoSign {
             Log.d(TAG, "Sign2: err-> " + e);
             showTost("签到失败！", -1);
         }
-        Looper.loop();
     }
 
     public static void SignInView(){
