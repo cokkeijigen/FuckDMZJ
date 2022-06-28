@@ -4,13 +4,13 @@ plugins {
 
 android {
     compileSdk 31
-
+    
     defaultConfig {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 1321
-        versionName "v1.0.13"
+        versionCode 1501
+        versionName "v1.0.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

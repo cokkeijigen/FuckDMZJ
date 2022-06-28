@@ -17,8 +17,6 @@ import de.robv.android.xposed.XC_MethodHook;
 public final class Others {
 
     public static void initClassHooks(){
-        UserAutoSign.init();
-        UserAutoSign.SignInView();
         TeenagerModeDialogActivity();
         allActivitySetStatusBar();
         ActivityOptimization();
