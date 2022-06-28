@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,7 +73,8 @@ public final class AdLayout {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 RelativeLayout layout_container = (RelativeLayout) getField(param, "layout_container");
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(0, 0);
+                ViewGroup.LayoutParams layoutParams = layout_container.getLayoutParams();
+                layoutParams.height = 0;
                 layout_container.setLayoutParams(layoutParams);
             }
         };
