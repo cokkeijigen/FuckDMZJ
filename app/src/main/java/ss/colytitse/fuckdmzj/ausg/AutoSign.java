@@ -68,11 +68,10 @@ public final class AutoSign {
                     this.credits_nums != us.credits_nums || this.silver_nums != us.silver_nums;
         }
 
-        @Override
-        public @NonNull
-        String toString() {
-            if (initComplete) return "    "+
-                    "\nuser -> {"+
+        @Override @NonNull
+        public String toString() {
+            if (initComplete) return "    " +
+                    "\nuser -> {" +
                     " \n    max_sign_count = "  + max_sign_count +
                     ";    sign_count = "     + sign_count +
                     "; \n    credits_nums = "   + credits_nums +
@@ -156,26 +155,27 @@ public final class AutoSign {
     private static void onStart() {
         if (!thisUserModelInit) return;
         try{
-            user before = new user();       // 签到前数据;
             if(OkHttp.init()) {
+                user beforeSG = new user();       // 签到前数据;
                 String SignResult1 = onSignApi_at1();
                 String SignResult2 = onSignApi_at2();
-
                 if (Objects.equals(SignResult1, "{\"code\":2,\"msg\":\"\\u4eca\\u5929\\u5df2\\u7ecf\\u7b7e\\u5230\\uff01\"}"))
                     showToast("今日已签到！");
                 else if (Objects.equals(SignResult1, "{\"code\":0,\"msg\":\"\\u6210\\u529f\"}")){
                     user afterSG = new user();  // 签到后数据
-                    showToast("签到成功" + (before.notEquals(afterSG) ? String.format( "：积分 + %d 银币 + %d",
-                                    afterSG.credits_nums - before.credits_nums, afterSG.silver_nums - before.silver_nums
+                    showToast("签到成功" + (
+                            beforeSG.notEquals(afterSG) ? String.format( "：积分 + %d 银币 + %d",
+                            afterSG.credits_nums - beforeSG.credits_nums, afterSG.silver_nums - beforeSG.silver_nums
                             ) : "！")
                     );
                     showToast(String.format("已连续签到： %d 天", afterSG.sign_count));
                 } else showToast("签到状态未知！");
 
+                user beforeDT = new user();
                 List<String> DaysTaskResult = onDaysTask();  // 任务签到
                 user afterDT = new user();
-                if (before.notEquals(afterDT)) showToast(String.format( "完成任务：积分 + %d 银币 + %d",
-                        afterDT.credits_nums - before.credits_nums, afterDT.silver_nums - before.silver_nums)
+                if (beforeDT.notEquals(afterDT)) showToast(String.format( "完成任务：积分 + %d 银币 + %d",
+                        afterDT.credits_nums - beforeDT.credits_nums, afterDT.silver_nums - beforeDT.silver_nums)
                 );
 
                 Log.d(INFO, "DaysTaskResult -> \n" + DaysTaskResult);
@@ -203,8 +203,7 @@ public final class AutoSign {
                     }
                 });
             } catch (Throwable ignored) {}
-        }
-        if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
+        } else if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
             final String HomeMeFragment = "com.dmzjsq.manhua_kt.ui.home.HomeMeFragment";
             Class<?> HomeMeFragmentClass = getClazz(HomeMeFragment);
             if (HomeMeFragmentClass != null) try {
