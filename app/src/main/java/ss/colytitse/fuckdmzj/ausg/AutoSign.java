@@ -138,7 +138,7 @@ public final class AutoSign {
         return result;
     }
 
-    private static String onSignApi_at1() throws Exception{
+    private static String at1SignApi() throws Exception{
         Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
                 "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* APP签到接口 */
                 "/task/sign?uid=%s&token=%s&sign=%s", thisUserId, thisUserToken, thisUserSign
@@ -146,7 +146,7 @@ public final class AutoSign {
         return OkHttp.ResponseBodyString(Request);
     }
 
-    private static String onSignApi_at2() throws Exception{
+    private static String at2SignApi() throws Exception{
         Object FormBody = OkHttp.FormBodyBuilder("token=" + thisUserToken, "uid=" + thisUserId, "sign=" + thisUserSign);
         Object Request = OkHttp.RequestBuilder("http://api.bbs.muwai.com/v1/sign/add", FormBody); /* 貌似是网页签到接口? */
         return OkHttp.ResponseBodyString(Request);
@@ -157,8 +157,8 @@ public final class AutoSign {
         try{
             if(OkHttp.init()) {
                 user beforeSG = new user();       // 签到前数据;
-                String SignResult1 = onSignApi_at1();
-                String SignResult2 = onSignApi_at2();
+                String SignResult1 = at1SignApi();
+                String SignResult2 = at2SignApi();
                 if (Objects.equals(SignResult1, "{\"code\":2,\"msg\":\"\\u4eca\\u5929\\u5df2\\u7ecf\\u7b7e\\u5230\\uff01\"}"))
                     showToast("今日已签到！");
                 else if (Objects.equals(SignResult1, "{\"code\":0,\"msg\":\"\\u6210\\u529f\"}")){
