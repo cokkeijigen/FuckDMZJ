@@ -59,10 +59,8 @@ public class MainActivity extends Activity {
             }
         }
         {   // 设置已安装状态
-            @SuppressLint("QueryPermissionsNeeded")
-            List<PackageInfo> allAppList = getPackageManager().getInstalledPackages(0);
-            List<String> dmzj = allAppList.stream().filter(e -> e.packageName.contains("dmzj"))
-                    .map(e -> e.packageName)
+            List<String> dmzj = (getPackageManager().getInstalledPackages(0)).stream()
+                    .filter(e -> e.packageName.contains("dmzj")).map(e -> e.packageName)
                     .filter(e -> (e.equals(DMZJ_PKGN) || e.equals(DMZJSQ_PKGN)))
                     .collect(Collectors.toList());
             TextView isInstall = findViewById(R.id.dmzjinstall);
