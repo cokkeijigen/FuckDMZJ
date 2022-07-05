@@ -154,6 +154,7 @@ public final class AutoSign {
 
     private static void onStart() {
         if (!thisUserModelInit) return;
+        boolean signComplete = false;
         try{
             if(OkHttp.init()) {
                 user beforeSG = new user();       // 签到前数据;
@@ -170,6 +171,7 @@ public final class AutoSign {
                     );
                     showToast(String.format("已连续签到： %d 天", afterSG.sign_count));
                 } else showToast("签到状态未知！");
+                signComplete = true;
 
                 user beforeDT = new user();
                 List<String> DaysTaskResult = onDaysTask();  // 任务签到
@@ -184,7 +186,7 @@ public final class AutoSign {
             }
         }catch (Exception e){
             Log.d(TAG, "Sign2: err-> " + e);
-            showToast("签到失败！");
+            if(!signComplete) showToast("签到失败！");
         }
     }
 
