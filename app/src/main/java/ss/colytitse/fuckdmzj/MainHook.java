@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import ss.colytitse.fuckdmzj.ausg.AutoSign;
+import ss.colytitse.fuckdmzj.atsg.AutoSign;
 import ss.colytitse.fuckdmzj.hook.*;
 
 public class MainHook implements IXposedHookLoadPackage {

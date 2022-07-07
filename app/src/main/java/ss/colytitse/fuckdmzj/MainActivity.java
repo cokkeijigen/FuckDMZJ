@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -40,11 +41,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         {   // 设置状态栏样式
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
-            if(getApplicationContext().getResources().getConfiguration().uiMode == 0x11)
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            Window thisWindow = this.getWindow();
+            if(this.getResources().getConfiguration().uiMode == 0x11)
+                thisWindow.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            thisWindow.setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
         }
-        {   // 设置功能支持列表
+        {   // 设置模块信息内容
             TextView AppVersionName = findViewById(R.id.version_name);
             AppVersionName.setText(String.format((String) AppVersionName.getText(), getVersionName()));
             TextView SupportItems = findViewById(R.id.support_items);
@@ -59,10 +61,8 @@ public class MainActivity extends Activity {
             }
         }
         {   // 设置已安装状态
-            @SuppressLint("QueryPermissionsNeeded")
-            List<PackageInfo> allAppList = getPackageManager().getInstalledPackages(0);
-            List<String> dmzj = allAppList.stream().filter(e -> e.packageName.contains("dmzj"))
-                    .map(e -> e.packageName)
+            List<String> dmzj = (getPackageManager().getInstalledPackages(0)).stream()
+                    .filter(e -> e.packageName.contains("dmzj")).map(e -> e.packageName)
                     .filter(e -> (e.equals(DMZJ_PKGN) || e.equals(DMZJSQ_PKGN)))
                     .collect(Collectors.toList());
             TextView isInstall = findViewById(R.id.dmzjinstall);
