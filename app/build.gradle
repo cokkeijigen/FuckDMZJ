@@ -9,8 +9,8 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 31
-        versionCode 1521
-        versionName "v1.1.5"
+        versionCode 1643
+        versionName "v1.1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,4 +38,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'de.robv.android.xposed:api:82'
     implementation 'com.google.android.material:material:1.6.1'
+
 }

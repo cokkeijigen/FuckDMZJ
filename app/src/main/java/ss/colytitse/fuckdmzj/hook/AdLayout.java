@@ -3,15 +3,21 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import java.lang.reflect.Method;
 import de.robv.android.xposed.XC_MethodHook;
 
 public final class AdLayout {
@@ -20,8 +26,8 @@ public final class AdLayout {
         InstructionActivity();
         NovelBrowseActivity();
         CartoonDetailsView();
-        LaunchInterceptorActivity();
         AdLoadingActivity();
+        LaunchInterceptorActivity();
     }
 
     private static void InstructionActivity() {
@@ -93,36 +99,64 @@ public final class AdLayout {
         }catch (Throwable ignored){}
     }
 
-    private static void LaunchInterceptorActivity() {
+    @SuppressLint({"NewApi", "UseCompatLoadingForDrawables", "SetTextI18n"})
+    private static void LaunchReplacement(XC_MethodHook.MethodHookParam param, int color){
+        Context mContext = (Context) param.thisObject;
+        Activity mActivty = (Activity) param.thisObject;
+        if (!mContext.getSharedPreferences("user_info", Context.MODE_PRIVATE).getBoolean("app_usered", false))
+            return;
+        LinearLayout linearLayout = new LinearLayout(mActivty);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setGravity(Gravity.CENTER);
+        linearLayout.setBackgroundColor(color);
+        linearLayout.setPadding(110, linearLayout.getPaddingTop(), 110, linearLayout.getPaddingBottom());
+        ImageView imageView = new ImageView(mActivty);
+        int resourceId = mContext.getResources().getIdentifier("img_lauch_bitch", "drawable", TARGET_PACKAGE_NAME);
+        imageView.setImageDrawable(mContext.getDrawable(resourceId));
+        TextView textView = new TextView(mActivty);
+        textView.setText("-Started By FuckDMZJXposed-");
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        textView.setTextColor(Color.parseColor("#ffffff"));
+        textView.setPadding(0,100,0,0);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextSize(15);
+        linearLayout.addView(imageView);
+        linearLayout.addView(textView);
+        mActivty.setContentView(linearLayout);
+        new Thread(()->{
+            try {
+                Thread.sleep(500);
+                Intent intent = new Intent();
+                intent.setClass(mContext, getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+                callMethod(param.thisObject, "finish");
+            } catch (Exception ignored) {}
+        }).start();
+    }
+
+    public static void LaunchInterceptorActivity() {
         final String LaunchInterceptorActivity = TARGET_PACKAGE_NAME + ".ui.LaunchInterceptorActivity";
         final Class<?> LaunchInterceptorActivityClass = getClazz(LaunchInterceptorActivity);
-        final XC_MethodHook Fucked = new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Activity activity = (Activity) param.thisObject;
-                Class<?> thisObjectClass = param.thisObject.getClass();
-                Method goMainPage = thisObjectClass.getDeclaredMethod("goMainPage");
-                goMainPage.setAccessible(true);
-                goMainPage.invoke(param.thisObject);
-                activity.finish();
-            }
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Context context = (Context) param.thisObject;
-                Activity activity = (Activity) param.thisObject;
-                int resourceId = context.getResources().getIdentifier("skip_view", "id", DMZJSQ_PKGN);
-                TextView textView = activity.findViewById(resourceId);
-                textView.setVisibility(View.GONE);
-            }
-        };
         if (LaunchInterceptorActivityClass == null) return;
         if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)) try {
-            findAndHookMethod(LaunchInterceptorActivityClass, "createContent", Fucked);
+            findAndHookMethod(LaunchInterceptorActivityClass, "createContent", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    LaunchReplacement(param, Color.parseColor("#ffaf25"));
+                }
+            });
         } catch (Throwable ignored) {}
-        try {
-            findAndHookMethod(LaunchInterceptorActivityClass, "showColdCpAd", onReturnVoid);
+        else try {
+            findAndHookMethod(LaunchInterceptorActivityClass, "onResume", new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    LaunchReplacement(param, Color.parseColor("#0080ec"));
+                }
+            });
         }catch (Throwable ignored){}
     }
 }

@@ -4,23 +4,28 @@ import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.XModuleResources;
 import java.lang.reflect.Field;
+import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.atsg.AutoSign;
 import ss.colytitse.fuckdmzj.hook.*;
 
-public class MainHook implements IXposedHookLoadPackage {
+public class MainHook implements IXposedHookLoadPackage, IXposedHookInitPackageResources,IXposedHookZygoteInit {
 
     // 普通版包名
     public static final String DMZJ_PKGN = "com.dmzj.manhua";
     // 社区版包名
     public static final String DMZJSQ_PKGN = "com.dmzjsq.manhua";
-    /* hook所需字段：类加载器、进程包名 */
+    /* hook所需字段：类加载器、进程包名、模块路径 */
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
+    private static String MODULE_PATH = null;
 
     // 获取类
     public static Class<?> getClazz(String className){
@@ -56,9 +61,22 @@ public class MainHook implements IXposedHookLoadPackage {
                 AdLayout.initClassHooks();
                 AdService.initClassHooks();
                 Others.initClassHooks();
+                AutoSign.initStart();
                 AutoSign.SignInView();
-                AutoSign.init();
+                AutoSign.clearSignButtonView();
             }
         });
+    }
+
+    @Override
+    public void initZygote(StartupParam startupParam) {
+        MODULE_PATH = startupParam.modulePath;
+    }
+
+    @Override
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resparam)  {
+        if (!(resparam.packageName.equals(DMZJ_PKGN) || resparam.packageName.equals(DMZJSQ_PKGN))) return;
+        XModuleResources instance = XModuleResources.createInstance(MODULE_PATH, resparam.res);
+        resparam.res.setReplacement(resparam.packageName, "drawable", "img_lauch_bitch", instance.fwd(R.drawable.img_lauch_bitch));
     }
 }

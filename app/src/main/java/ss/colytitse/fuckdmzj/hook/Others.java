@@ -12,7 +12,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.lang.reflect.Method;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 
 public final class Others {
 
@@ -102,6 +104,10 @@ public final class Others {
         }
     }
 
+//    private static void LaunchInterceptorActivity(Class<?> launch, int color){
+//       findAndHookMethod(launch, )
+//    }
+
     private static void OptimizationDMZJ(XC_MethodHook onActivityFullscreen, XC_MethodHook onNovelBrowseActivity) {
         {   // 启动页
             final String LaunchInterceptorActivity = "com.dmzj.manhua.ui.LaunchInterceptorActivity";
@@ -148,7 +154,9 @@ public final class Others {
         final String TeenagerModeDialogActivity = TARGET_PACKAGE_NAME + "_kt.ui.TeenagerModeDialogActivity";
         final Class<?> TeenagerModeDialogActivityClass = getClazz(TeenagerModeDialogActivity);
         if (TeenagerModeDialogActivityClass != null) try {
-            findAndHookMethod(TeenagerModeDialogActivityClass, "initView", onActivityFinish(true));
+            for (Method declaredMethod : TeenagerModeDialogActivityClass.getDeclaredMethods()) {
+                XposedBridge.hookMethod(declaredMethod, onActivityFinish(true));
+            }
         } catch (Throwable ignored) {}
     }
 

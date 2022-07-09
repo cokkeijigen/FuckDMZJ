@@ -82,8 +82,9 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="ObjectiveC" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="project.structure.last.edited" value="Suggestions" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="MTConfigurable" />
@@ -100,6 +101,8 @@
       <recent name="F:\PROJECT\FuckDMZJ\app\src\main\res\values-night" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\PROJECT\FuckDMZJ\app\src\main\res\drawable" />
+      <recent name="F:\PROJECT\FuckDMZJ\app\libs" />
       <recent name="F:\PROJECT\FuckDMZJ\app\src\main\res" />
       <recent name="F:\OneDrive - Frank Nielsen Inc\FuckDMZJ\app\src\main\res\drawable" />
       <recent name="D:\OneDrive - Frank Nielsen Inc\FuckDMZJ\app\src\main\res\drawable" />
