@@ -13,9 +13,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import ss.colytitse.fuckdmzj.test.PublicContent;
 
 @SuppressLint({"NewApi", "StaticFieldLeak", "DefaultLocale"})
-public final class UserInfo {
+public final class UserInfo extends PublicContent {
 
     private String userId;
     private String userToken;

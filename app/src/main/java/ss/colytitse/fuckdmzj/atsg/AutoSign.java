@@ -3,6 +3,7 @@ package ss.colytitse.fuckdmzj.atsg;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
+import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,9 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import de.robv.android.xposed.XC_MethodHook;
+import ss.colytitse.fuckdmzj.test.PublicContent;
 
 @SuppressLint({"NewApi", "StaticFieldLeak", "DefaultLocale"})
-public final class AutoSign {
+public final class AutoSign extends PublicContent {
 
     private static final String SIGN_RESULT_COM
             = "{\"code\":2,\"msg\":\"\\u4eca\\u5929\\u5df2\\u7ecf\\u7b7e\\u5230\\uff01\"}";
@@ -204,8 +206,8 @@ public final class AutoSign {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 super.afterHookedMethod(param);
                                 View result = (View) param.getResult();
-                                Context context = result.getContext();
-                                int resourceId = context.getResources().getIdentifier("unread", "id", DMZJSQ_PKGN);
+                                Context thisObject = result.getContext();
+                                int resourceId = getIdentifier(thisObject,"id", "unread");
                                 ImageView imageView = result.findViewById(resourceId);
                                 imageView.setImageAlpha(0);
                             }

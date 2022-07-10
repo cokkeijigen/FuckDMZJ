@@ -3,7 +3,9 @@ package ss.colytitse.fuckdmzj.atsg;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static ss.colytitse.fuckdmzj.MainHook.getClazz;
 
-public final class OkHttp {
+import ss.colytitse.fuckdmzj.test.PublicContent;
+
+public final class OkHttp extends PublicContent {
 
     private static Class<?> RequestBuilderClass = null;
     private static Class<?> FormBodyBuilderClass = null;

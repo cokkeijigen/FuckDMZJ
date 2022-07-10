@@ -11,8 +11,9 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
+import ss.colytitse.fuckdmzj.test.PublicContent;
 
-public final class AdService{
+public final class AdService extends PublicContent {
 
     public static void initClassHooks(){
         LandscapeADActivity();
