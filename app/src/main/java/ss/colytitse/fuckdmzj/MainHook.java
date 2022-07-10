@@ -28,7 +28,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
     private static String MODULE_PATH = null;
-
+    
     // 获取类
     public static Class<?> getClazz(String className){
         try {
