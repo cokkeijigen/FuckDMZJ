@@ -77,14 +77,6 @@ public final class UserInfo extends PublicContent {
         return this.userSign;
     }
 
-    @Override @NonNull
-    public String toString() {
-        return String.format(
-                "UserInfo ->{ uid(%s), token(%s), sign(%s) }",
-                this.userId, this.userToken, this.userSign
-        );
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -95,6 +87,14 @@ public final class UserInfo extends PublicContent {
 
     public boolean initComplete(){
         return (userId != null && userToken != null && userSign != null);
+    }
+
+    @Override @NonNull
+    public String toString() {
+        return String.format(
+                "UserInfo ->{ uid(%s), token(%s), sign(%s) }",
+                this.userId, this.userToken, this.userSign
+        );
     }
 
     public static class user {
@@ -111,7 +111,7 @@ public final class UserInfo extends PublicContent {
             if (!OkHttp.init()) return;
             Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
                     "http://v3api.muwai.com" : "http://nnv3api.muwai.com") +  /* 获取状态接口 */
-                    "/task/index?uid=%s&token=%s&sign=%s", userInfo.userId, userInfo.userToken, userInfo.getUserSign()
+                    "/task/index?uid=%s&token=%s&sign=%s", userInfo.userId, userInfo.userToken, userInfo.userSign
             ), null);
             this.result = OkHttp.ResponseBodyString(Request);
             Arrays.stream(Objects.requireNonNull(this.result).split(","))

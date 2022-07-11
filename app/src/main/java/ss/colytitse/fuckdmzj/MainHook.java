@@ -3,14 +3,20 @@ package ss.colytitse.fuckdmzj;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.hook.AdLayout.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
+
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.XModuleResources;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.atsg.AutoSign;
@@ -28,7 +34,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
     private static String MODULE_PATH = null;
-    
+
     // 获取类
     public static Class<?> getClazz(String className){
         try {
@@ -88,6 +94,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.clearSignButtonView();
         });
     }
+
     @Override
     public void initZygote(StartupParam startupParam) {
         MODULE_PATH = startupParam.modulePath;

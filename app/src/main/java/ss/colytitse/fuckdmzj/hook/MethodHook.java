@@ -98,6 +98,7 @@ public final class MethodHook extends PublicContent {
 
 
     public static class FuckerHook {
+
         private static Class<?> thisFuckerClass;
 
         // 在全部类加载器中查找并hook
@@ -115,11 +116,11 @@ public final class MethodHook extends PublicContent {
         }
 
         public static void hookMethods(Class<?> clazz,String methodName ,HookCallBack callBack){
-            hookMethods(clazz, methodName, callBack, HookCallBackType.AFTER_CALL_BACK);
+            hookMethods(clazz, methodName, callBack, false);
         }
 
-        public static void hookMethods(Class<?> clazz,String methodName ,HookCallBack callBack, int callType){
-            new hookMethods(clazz, methodName, callBack, callType).run();
+        public static void hookMethods(Class<?> clazz,String methodName ,HookCallBack callBack, boolean before){
+            new hookMethods(clazz, methodName, callBack, before).run();
         }
 
         public static Class<?> getClass(String clazzName){
@@ -130,32 +131,16 @@ public final class MethodHook extends PublicContent {
             return thisFuckerClass;
         }
 
-        public static class HookCallBackType{
-            public final static int REPLACE_CALL_BACK = -1;
-            public final static int BERORE_CALL_BACK = 0;
-            public final static int AFTER_CALL_BACK = 1;
-        }
+        public static class  hookMethods{
 
-        private static class  hookMethods{
+            protected final Class<?> thisClass;
+            protected final String targetMethod;
+            protected final XC_MethodHook hookCallBack;
 
-            private final Class<?> thisClass;
-            private final String targetMethod;
-            private final XC_MethodHook hookCallBack;
-
-            public hookMethods(Class<?> clazz, String methodName ,HookCallBack callBack, int callType){
+            public hookMethods(Class<?> clazz, String methodName ,HookCallBack callBack, boolean before){
                 this.thisClass = clazz;
                 this.targetMethod = methodName;
-
-                if (callType == HookCallBackType.REPLACE_CALL_BACK)
-                    this.hookCallBack = new XC_MethodReplacement() {
-                        @Override
-                        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-                            if (param.thisObject.getClass().equals(thisClass)) callBack.hook(param);
-                            return null;
-                        }
-                    };
-                else if (callType == HookCallBackType.BERORE_CALL_BACK)
-                    this.hookCallBack = new XC_MethodHook() {
+                if (before) this.hookCallBack = new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             super.beforeHookedMethod(param);
@@ -170,19 +155,28 @@ public final class MethodHook extends PublicContent {
                     }
                 };
             }
+            public hookMethods(Class<?> clazz, String methodName){
+                this.thisClass = clazz;
+                this.targetMethod = methodName;
+                this.hookCallBack = null;
+            }
+
+            public void hookMethod(Method method){
+                XposedBridge.hookMethod(method, hookCallBack);
+            }
 
             private void nextFinds(Class<?> clazz){
                 int thisResult = 0;     // 成功找到method的次数
                 for (Method declaredMethod : clazz.getDeclaredMethods())
                     if (declaredMethod.getName().equals(targetMethod)) try {
                         ++thisResult;
-                        XposedBridge.hookMethod(declaredMethod, hookCallBack);
+                        hookMethod(declaredMethod);
                     } catch (Exception ignored) {}
                 if (thisResult != 0 || clazz.getSuperclass() == null) return;
                 nextFinds(clazz.getSuperclass());
             }
 
-            public void run(){
+            public final void run(){
                 nextFinds(thisClass);
             }
         }

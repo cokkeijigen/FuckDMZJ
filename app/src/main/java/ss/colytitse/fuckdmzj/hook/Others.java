@@ -61,7 +61,6 @@ public final class Others extends PublicContent {
                             FrameLayout framelayout = (FrameLayout) activity.findViewById(identifier);
                             int left = framelayout.getPaddingStart();
                             int top = getStatusBarHeight((Context) param.thisObject);
-                            Log.d(PublicContent.TAG, "高度？: " + top);
                             int right = framelayout.getPaddingEnd();
                             int bottom = framelayout.getPaddingBottom();
                             framelayout.setPadding(left, top, right, bottom);

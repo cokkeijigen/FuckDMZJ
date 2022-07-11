@@ -18,8 +18,8 @@ import androidx.core.content.ContextCompat;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends Activity {
 
@@ -35,8 +35,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override
-    @SuppressLint({"SetTextI18n", "NewApi"})
+    @Override @SuppressLint({"SetTextI18n", "NewApi"})
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
@@ -61,17 +60,21 @@ public class MainActivity extends Activity {
             }
         }
         {   // 设置已安装状态
-            List<String> dmzj = (getPackageManager().getInstalledPackages(0)).stream()
-                    .filter(e -> e.packageName.contains("dmzj")).map(e -> e.packageName)
-                    .filter(e -> (e.equals(DMZJ_PKGN) || e.equals(DMZJSQ_PKGN)))
-                    .collect(Collectors.toList());
+            HashMap<String, String> dmzj = new HashMap<>();
+            getPackageManager().getInstalledPackages(0).stream()
+                    .filter(e -> (e.packageName.equals(DMZJ_PKGN) || e.packageName.equals(DMZJSQ_PKGN)))
+                    .forEach(e -> dmzj.put(e.packageName, e.versionName));
             TextView isInstall = findViewById(R.id.dmzjinstall);
-            isInstall.setText(String.format((String) isInstall.getText(),
-                    (dmzj.size() == 0) ? "无" : (
-                        (dmzj.size() == 2) ? "普通版 & 社区版" :
-                                (dmzj.get(0).equals(DMZJSQ_PKGN)) ? "仅社区版"  : "仅普通版"
-                        )
-                    ));
+            String text = (String) isInstall.getText();
+            if (dmzj.size() == 2)
+                text = String.format(text, String.format("普通版(v%s) & 社区版(v%s)", dmzj.get(DMZJ_PKGN) , dmzj.get(DMZJSQ_PKGN)));
+            else if (dmzj.get(DMZJ_PKGN) != null)
+                text = String.format(text, "仅普通版(v%)".replace("%", Objects.requireNonNull(dmzj.get(DMZJ_PKGN))));
+            else if (dmzj.get(DMZJSQ_PKGN) != null)
+                text = String.format(text, "仅社区版(v%)".replace("%", Objects.requireNonNull(dmzj.get(DMZJSQ_PKGN))));
+            else
+                text = String.format(text, "无");
+            isInstall.setText(text);
         }
     }
 

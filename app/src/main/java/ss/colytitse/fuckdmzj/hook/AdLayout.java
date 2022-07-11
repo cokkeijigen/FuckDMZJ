@@ -3,7 +3,6 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
-import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,7 +11,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +38,7 @@ public final class AdLayout extends PublicContent {
                 Activity activity = (Activity) param.thisObject;
                 Context thisObject = (Context) param.thisObject;
                 int identifier = getIdentifier(thisObject,  "id", "layout_ad_layout");
-                RelativeLayout layout_ad_layout = (RelativeLayout)  activity.findViewById(identifier);
+                RelativeLayout layout_ad_layout =  activity.findViewById(identifier);
                 ViewGroup.LayoutParams layoutParams = layout_ad_layout.getLayoutParams();
                 layoutParams.height = 0;
                 layout_ad_layout.setLayoutParams(layoutParams);
@@ -137,16 +135,13 @@ public final class AdLayout extends PublicContent {
     public static void LaunchInterceptorActivity(int res) {
         final Class<?> LaunchInterceptorActivityClass = getThisPackgeClass(".ui.LaunchInterceptorActivity");
         if (LaunchInterceptorActivityClass == null) return;
-        if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)) try {
+        try {
             hookMethods(LaunchInterceptorActivityClass, "onCreate", param -> {
-                LaunchReplacement(param, Color.parseColor("#ffaf25"), res);
-            });
-            findAndHookMethod(LaunchInterceptorActivityClass, "goMainPage", onReturnVoid);
-        } catch (Throwable ignored) {}
-        else try {
-            hookMethods(LaunchInterceptorActivityClass, "onCreate", param -> {
-                LaunchReplacement(param, Color.parseColor("#0080ec"), res);
+                LaunchReplacement(param, Color.parseColor(TARGET_PACKAGE_NAME.equals(DMZJ_PKGN) ? "#0080ec" : "#ffaf25"), res);
             });
         }catch (Throwable ignored){}
+        if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)) try {
+            findAndHookMethod(LaunchInterceptorActivityClass, "goMainPage", onReturnVoid);
+        } catch (Throwable ignored) {}
     }
 }
