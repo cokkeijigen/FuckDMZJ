@@ -94,7 +94,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.clearSignButtonView();
         });
     }
-
+    
     @Override
     public void initZygote(StartupParam startupParam) {
         MODULE_PATH = startupParam.modulePath;
