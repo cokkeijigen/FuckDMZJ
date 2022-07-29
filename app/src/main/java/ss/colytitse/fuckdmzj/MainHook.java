@@ -90,7 +90,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.initStart();
             AutoSign.SignInView();
             AutoSign.clearSignButtonView();
-//            test();
+            test();
         });
     }
 
