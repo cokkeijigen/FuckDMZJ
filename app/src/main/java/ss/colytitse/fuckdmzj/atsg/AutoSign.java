@@ -4,6 +4,7 @@ import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
+import static ss.colytitse.fuckdmzj.hook.MethodHook.getIdentifier;
 import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -190,8 +191,8 @@ public final class AutoSign extends PublicContent {
                         super.afterHookedMethod(param);
                         Activity mActivty = (Activity) param.thisObject;
                         Context mContext = mActivty.getApplicationContext();
-                        int identifier = mContext.getResources().getIdentifier("iv_my_unread_counts2", "id", DMZJ_PKGN);
-                        ImageView imageView = (ImageView) mActivty.findViewById(identifier);
+                        int identifier = getIdentifier(mContext, "id", "iv_my_unread_counts2");
+                        ImageView imageView = mActivty.findViewById(identifier);
                         imageView.setImageAlpha(0);
                     }
                 });

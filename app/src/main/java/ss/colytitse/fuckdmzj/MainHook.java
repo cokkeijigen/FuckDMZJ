@@ -92,9 +92,14 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.initStart();
             AutoSign.SignInView();
             AutoSign.clearSignButtonView();
+//            test();
         });
     }
-    
+
+    private void test() {
+        setMethodInvokePrint(getThisPackgeClass(".ui.CartoonInstructionActivity"));
+    }
+
     @Override
     public void initZygote(StartupParam startupParam) {
         MODULE_PATH = startupParam.modulePath;

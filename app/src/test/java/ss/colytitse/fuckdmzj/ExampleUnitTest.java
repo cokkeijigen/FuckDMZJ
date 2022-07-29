@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -14,6 +16,7 @@ import java.util.Date;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        System.out.println(new Date());
+        String test = new String(new byte[]{-26, -128, -69, -28, -71, -117, -26, -119, -109, -25, -126, -71, -27, -83, -105, -28, -72, -118, -27, -114, -69});
+        System.out.println(test);
     }
 }

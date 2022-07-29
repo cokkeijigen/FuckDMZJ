@@ -42,13 +42,13 @@ public final class Others extends PublicContent {
             final Class<?> BrowseActivityAncestorsClass
                     = getThisPackgeClass(".ui.BrowseActivityAncestors : .ui.abc.viewpager2.BrowseActivityAncestors4");
             if (BrowseActivityAncestorsClass != null) try {
-                hookMethods(BrowseActivityAncestorsClass, "onStart", param -> setActivityFullscreen((Activity) param.thisObject));
+                hookMethods(BrowseActivityAncestorsClass, "onStart", (HookCallBack) param -> setActivityFullscreen((Activity) param.thisObject));
             }catch (Throwable ignored){}
         }
         {   // 小说阅读界面
             final Class<?> NovelBrowseActivityClass = getThisPackgeClass(".ui.NovelBrowseActivity");
             if (NovelBrowseActivityClass != null) try {
-                hookMethods(NovelBrowseActivityClass, "onStart", param -> {
+                hookMethods(NovelBrowseActivityClass, "onStart", (HookCallBack) param -> {
                     Activity activity = (Activity) param.thisObject;
                     setActivityFullscreen(activity);
                     View decorView = activity.getWindow().getDecorView();
@@ -58,7 +58,7 @@ public final class Others extends PublicContent {
                         if (decorView.getRootWindowInsets().getDisplayCutout() == null) return;
                         try {
                             int identifier = getIdentifier(activity.getApplicationContext(), "id", "framelayout");
-                            FrameLayout framelayout = (FrameLayout) activity.findViewById(identifier);
+                            FrameLayout framelayout = activity.findViewById(identifier);
                             int left = framelayout.getPaddingStart();
                             int top = getStatusBarHeight((Context) param.thisObject);
                             int right = framelayout.getPaddingEnd();
@@ -66,7 +66,6 @@ public final class Others extends PublicContent {
                             framelayout.setPadding(left, top, right, bottom);
                         } catch (Throwable ignored) {}
                     });
-
                 });
             }catch (Throwable ignored){}
         }
@@ -74,14 +73,14 @@ public final class Others extends PublicContent {
             if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
                 final Class<?> ShareActivityClass = getThisPackgeClass(".ui.ShareActivity");
                 if (ShareActivityClass != null)try {
-                    hookMethods(ShareActivityClass, "onStart", param -> {
+                    hookMethods(ShareActivityClass, "onStart",(HookCallBack) param -> {
                         onSetActivityStatusBar((Activity) param.thisObject, 0x80000000);
                     });
                 }catch (Throwable ignored){}
             }else {
                 final Class<?> ShareActivityV2Class = getThisPackgeClass(".ui.ShareActivityV2");
                 if (ShareActivityV2Class != null) try {
-                    hookMethods(ShareActivityV2Class, "onStart", param -> {
+                    hookMethods(ShareActivityV2Class, "onStart", (HookCallBack) param -> {
                         setActivityFullscreen((Activity) param.thisObject);
                     });
                 }catch (Throwable ignored){}
@@ -97,8 +96,7 @@ public final class Others extends PublicContent {
 
     // 去除更新检测
     private static void AppUpDataHelper(){
-        final String AppUpDataHelper = TARGET_PACKAGE_NAME + ".helper.AppUpDataHelper";
-        final Class<?> AppUpDataHelperClass = getClazz(AppUpDataHelper);
+        final Class<?> AppUpDataHelperClass = getThisPackgeClass(".helper.AppUpDataHelper");
         if (AppUpDataHelperClass != null) try {
             findAndHookMethod(AppUpDataHelperClass, "checkVersionInfo",
                 Activity.class, Class.class, boolean.class, onReturnVoid);
@@ -107,12 +105,11 @@ public final class Others extends PublicContent {
 
     // 关闭傻逼青少年弹窗
     private static void TeenagerModeDialogActivity(){
-        final String TeenagerModeDialogActivity = TARGET_PACKAGE_NAME + "_kt.ui.TeenagerModeDialogActivity";
-        final Class<?> TeenagerModeDialogActivityClass = getClazz(TeenagerModeDialogActivity);
+        final Class<?> TeenagerModeDialogActivityClass = getThisPackgeClass("_kt.ui.TeenagerModeDialogActivity");
         if (TeenagerModeDialogActivityClass != null) try {
-            for (Method declaredMethod : TeenagerModeDialogActivityClass.getDeclaredMethods()) {
-                XposedBridge.hookMethod(declaredMethod, onActivityFinish(true));
-            }
+            hookMethods(TeenagerModeDialogActivityClass, "onStart", (HookCallBack) param -> {
+                callMethod(param.thisObject, "finish");
+            });
         } catch (Throwable ignored) {}
     }
 

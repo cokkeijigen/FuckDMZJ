@@ -56,18 +56,18 @@ public final class UserInfo extends PublicContent {
         } catch (Exception e) {
             Log.d(TAG, "getData: 错误？" + e);
         }
-            return null;
+        return null;
     }
 
     private String createUserSign(){
         String[] hexDigits = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
-        StringBuilder temp = new StringBuilder();
+        StringBuilder result = new StringBuilder();
         try {
             for (int md5 : MessageDigest.getInstance("MD5").digest((userToken + userId + "d&m$z*j_159753twt").getBytes())) {
                 if (md5 < 0) md5 += 256;
-                temp.append(hexDigits[md5 / 16]).append(hexDigits[md5 % 16]);
+                result.append(hexDigits[md5 / 16]).append(hexDigits[md5 % 16]);
             }
-            return temp.toString();
+            return result.toString();
         } catch (Exception e) {
             return null;
         }

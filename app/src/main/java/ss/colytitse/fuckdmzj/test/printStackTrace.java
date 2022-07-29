@@ -33,7 +33,7 @@ public class printStackTrace {
             if (!Modifier.isAbstract(mod) && !Modifier.isNative(mod) && !Modifier.isInterface(mod)) {
                 XposedBridge.hookMethod(md, new XC_MethodHook() {
                     public void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        Log.d(TAG, clazzName + " -> " + md.getName() + " [args.length = " + param.args.length);
+                        Log.d(TAG, clazzName + " -> " + md.getName() + " :args[" + Arrays.toString(param.args) + "]");
                     }
                 });
 

@@ -1,15 +1,18 @@
 package ss.colytitse.fuckdmzj.hook;
 
 import static de.robv.android.xposed.XposedBridge.*;
+import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static ss.colytitse.fuckdmzj.MainHook.TARGET_PACKAGE_NAME;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
+
 import java.lang.reflect.Method;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -115,12 +118,12 @@ public final class MethodHook extends PublicContent {
             });
         }
 
-        public static void hookMethods(Class<?> clazz,String methodName ,HookCallBack callBack){
-            hookMethods(clazz, methodName, callBack, false);
+        public static void hookMethods(Class<?> clazz, String methodName, Object callBack){
+            hookMethods(clazz, methodName, callBack, hookMethods.CallBackType.AFTER);
         }
 
-        public static void hookMethods(Class<?> clazz,String methodName ,HookCallBack callBack, boolean before){
-            new hookMethods(clazz, methodName, callBack, before).run();
+        public static void hookMethods(Class<?> clazz, String methodName, Object callBack, int callBackType){
+            new hookMethods(clazz, methodName, callBack, callBackType).run();
         }
 
         public static Class<?> getClass(String clazzName){
@@ -131,53 +134,53 @@ public final class MethodHook extends PublicContent {
             return thisFuckerClass;
         }
 
-        public static class  hookMethods{
+        public static final class  hookMethods{
 
-            protected final Class<?> thisClass;
-            protected final String targetMethod;
-            protected final XC_MethodHook hookCallBack;
+            private final Class<?> targetClass;
+            private final String targetMethodName;
+            private final XC_MethodHook hookCallBack;
+            public static final class CallBackType{
+                public static final int BEFORE = -1;
+                public static final int AFTER = 0;
+                public static final int REPLACE = 1;
+            }
 
-            public hookMethods(Class<?> clazz, String methodName ,HookCallBack callBack, boolean before){
-                this.thisClass = clazz;
-                this.targetMethod = methodName;
-                if (before) this.hookCallBack = new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            if (param.thisObject.getClass().equals(thisClass)) callBack.hook(param);
-                        }
-                    };
-                else this.hookCallBack = new XC_MethodHook() {
+            public hookMethods(Class<?> targetClazz, String methodName ,Object callBack, int callBackType){
+                this.targetClass = targetClazz;
+                this.targetMethodName = methodName;
+                this.hookCallBack = new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        if (!param.thisObject.getClass().equals(targetClass)) return;
+                        if (callBackType ==  CallBackType.REPLACE)
+                            param.setResult(((HookReplaceCallBack) callBack).hook(param));
+                        else if (callBackType == CallBackType.BEFORE)
+                            ((HookCallBack) callBack).hook(param);
+                    }
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
-                        if (param.thisObject.getClass().equals(thisClass)) callBack.hook(param);
+                        if (param.thisObject.getClass().equals(targetClass) && callBackType == CallBackType.AFTER)
+                            ((HookCallBack) callBack).hook(param);
                     }
                 };
             }
-            public hookMethods(Class<?> clazz, String methodName){
-                this.thisClass = clazz;
-                this.targetMethod = methodName;
-                this.hookCallBack = null;
-            }
 
-            public void hookMethod(Method method){
-                XposedBridge.hookMethod(method, hookCallBack);
-            }
-
-            private void nextFinds(Class<?> clazz){
+            private void nextFindAndHooks(Class<?> clazz){
                 int thisResult = 0;     // 成功找到method的次数
                 for (Method declaredMethod : clazz.getDeclaredMethods())
-                    if (declaredMethod.getName().equals(targetMethod)) try {
+                    if (declaredMethod.getName().equals(targetMethodName)) try {
                         ++thisResult;
-                        hookMethod(declaredMethod);
+                        XposedBridge.hookMethod(declaredMethod, hookCallBack);
                     } catch (Exception ignored) {}
-                if (thisResult != 0 || clazz.getSuperclass() == null) return;
-                nextFinds(clazz.getSuperclass());
+                if (thisResult != 0) return;
+                Class<?> superclass = clazz.getSuperclass();
+                if (superclass != null) nextFindAndHooks(superclass);
             }
 
-            public final void run(){
-                nextFinds(thisClass);
+            public void run(){
+                nextFindAndHooks(targetClass);
             }
         }
 
@@ -186,6 +189,9 @@ public final class MethodHook extends PublicContent {
         }
         public interface HookCallBack{
             void hook(XC_MethodHook.MethodHookParam param);
+        }
+        public interface HookReplaceCallBack{
+            Object hook(XC_MethodHook.MethodHookParam param);
         }
     }
 }
