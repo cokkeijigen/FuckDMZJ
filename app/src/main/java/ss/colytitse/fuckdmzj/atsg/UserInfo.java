@@ -1,6 +1,5 @@
 package ss.colytitse.fuckdmzj.atsg;
 
-import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import android.database.sqlite.SQLiteDatabase;
 import android.annotation.SuppressLint;

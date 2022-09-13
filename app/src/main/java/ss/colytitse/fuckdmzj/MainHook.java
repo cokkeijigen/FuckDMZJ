@@ -3,25 +3,25 @@ package ss.colytitse.fuckdmzj;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.hook.AdLayout.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.XModuleResources;
+import android.util.Log;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import ss.colytitse.fuckdmzj.atsg.AutoSign;
 import ss.colytitse.fuckdmzj.hook.*;
 import ss.colytitse.fuckdmzj.test.PublicContent;
 
-public class MainHook extends PublicContent implements IXposedHookLoadPackage, IXposedHookInitPackageResources,IXposedHookZygoteInit {
+public class MainHook extends PublicContent implements IXposedHookLoadPackage, IXposedHookInitPackageResources, IXposedHookZygoteInit {
 
     // 普通版包名
     public static final String DMZJ_PKGN = "com.dmzj.manhua";
@@ -90,12 +90,12 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.initStart();
             AutoSign.SignInView();
             AutoSign.clearSignButtonView();
-//            test();
+            // test();
         });
     }
 
     private void test() {
-        setMethodInvokePrint(getThisPackgeClass(".ui.CartoonInstructionActivity"));
+        // setMethodInvokePrint(getThisPackgeClass(".ui.CartoonInstructionActivity"));
     }
 
     @Override

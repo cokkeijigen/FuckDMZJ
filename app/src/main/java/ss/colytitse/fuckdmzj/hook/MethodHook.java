@@ -99,10 +99,12 @@ public final class MethodHook extends PublicContent {
         return mContext.getResources().getIdentifier(name, split[1], split[0]);
     }
 
-
     public static class FuckerHook {
 
         private static Class<?> thisFuckerClass;
+        public static final int BEFORE = -1;
+        public static final int AFTER = 0;
+        public static final int REPLACE = 1;
 
         // 在全部类加载器中查找并hook
         public static void inClassLoaderFindAndHook(Fucker fucker){
@@ -119,7 +121,7 @@ public final class MethodHook extends PublicContent {
         }
 
         public static void hookMethods(Class<?> clazz, String methodName, Object callBack){
-            hookMethods(clazz, methodName, callBack, hookMethods.CallBackType.AFTER);
+            hookMethods(clazz, methodName, callBack, FuckerHook.AFTER);
         }
 
         public static void hookMethods(Class<?> clazz, String methodName, Object callBack, int callBackType){
@@ -139,13 +141,8 @@ public final class MethodHook extends PublicContent {
             private final Class<?> targetClass;
             private final String targetMethodName;
             private final XC_MethodHook hookCallBack;
-            public static final class CallBackType{
-                public static final int BEFORE = -1;
-                public static final int AFTER = 0;
-                public static final int REPLACE = 1;
-            }
 
-            public hookMethods(Class<?> targetClazz, String methodName ,Object callBack, int callBackType){
+            public hookMethods(Class<?> targetClazz, String methodName , Object callBack, int callBackType){
                 this.targetClass = targetClazz;
                 this.targetMethodName = methodName;
                 this.hookCallBack = new XC_MethodHook() {
@@ -153,21 +150,21 @@ public final class MethodHook extends PublicContent {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         super.beforeHookedMethod(param);
                         if (!param.thisObject.getClass().equals(targetClass)) return;
-                        if (callBackType ==  CallBackType.REPLACE)
+                        if (callBackType ==  FuckerHook.REPLACE)
                             param.setResult(((HookReplaceCallBack) callBack).hook(param));
-                        else if (callBackType == CallBackType.BEFORE)
+                        else if (callBackType == FuckerHook.BEFORE)
                             ((HookCallBack) callBack).hook(param);
                     }
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
-                        if (param.thisObject.getClass().equals(targetClass) && callBackType == CallBackType.AFTER)
+                        if (param.thisObject.getClass().equals(targetClass) && callBackType == FuckerHook.AFTER)
                             ((HookCallBack) callBack).hook(param);
                     }
                 };
             }
 
-            private void nextFindAndHooks(Class<?> clazz){
+            private void nextFindAndHooks(Class<?> clazz) {
                 int thisResult = 0;     // 成功找到method的次数
                 for (Method declaredMethod : clazz.getDeclaredMethods())
                     if (declaredMethod.getName().equals(targetMethodName)) try {

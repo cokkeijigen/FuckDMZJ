@@ -9,6 +9,8 @@ import static ss.colytitse.fuckdmzj.test.PublicContent.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -35,6 +37,14 @@ public final class AutoSign extends PublicContent {
             = "{\"code\":0,\"msg\":\"\\u6210\\u529f\"}";
     private static Activity thisActivity = null;
 
+    public static boolean notNetworkAvailable(Context context) {
+        NetworkInfo info; ConnectivityManager  connectivity;
+        if ((connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)) != null
+                && (info = connectivity.getActiveNetworkInfo()) != null && info.isConnected())
+            return  info.getState() != NetworkInfo.State.CONNECTED;
+        return true;
+    }
+
     public static void initStart(){
         Class<?> HomeTabsActivitysClass = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
         if (HomeTabsActivitysClass != null) try {
@@ -44,7 +54,8 @@ public final class AutoSign extends PublicContent {
                     super.beforeHookedMethod(param);
                     thisActivity = (Activity) param.thisObject;
                     UserInfo userInfo = new UserInfo((Context) param.thisObject);
-                    // Log.d(TAG, "beforeHookedMethod: userInfo" + userInfo);
+                    if(notNetworkAvailable(thisActivity.getApplicationContext()))
+                        return;
                     new Thread(() -> onStart(userInfo)).start();
                 }
             };
@@ -81,7 +92,7 @@ public final class AutoSign extends PublicContent {
         return result;
     }
 
-    private static String at1SignApi(UserInfo userInfo) throws Exception{
+    private static String at1SignApi(UserInfo userInfo) throws Exception {
         Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
                 "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* APP签到接口 */
                 "/task/sign?uid=%s&token=%s&sign=%s", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign()
@@ -160,6 +171,7 @@ public final class AutoSign extends PublicContent {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
                     Context mContext = (Context) param.args[0];
+                    if(notNetworkAvailable(mContext)) return;
                     UserInfo userInfo = new UserInfo(mContext);
                     XC_MethodHook xc_methodHook = new XC_MethodHook() {
                         @Override

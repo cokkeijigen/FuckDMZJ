@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ss.colytitse.fuckdmzj">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />

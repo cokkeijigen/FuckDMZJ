@@ -11,12 +11,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import java.lang.reflect.Method;
+import android.widget.LinearLayout;
+
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import ss.colytitse.fuckdmzj.test.PublicContent;
 
 public final class Others extends PublicContent {
@@ -31,7 +30,7 @@ public final class Others extends PublicContent {
 
     // 获取状态栏高度
     private static int getStatusBarHeight(Context context) {
-        int resourceId = getIdentifier(context, "android:dimen", "status_bar_height");;
+        int resourceId = getIdentifier(context, "android:dimen", "status_bar_height");
         if (resourceId > 0) return context.getResources().getDimensionPixelSize(resourceId);
         return 0;
     }
