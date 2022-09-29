@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -41,13 +42,15 @@ public final class Others extends PublicContent {
             final Class<?> BrowseActivityAncestorsClass
                     = getThisPackgeClass(".ui.BrowseActivityAncestors : .ui.abc.viewpager2.BrowseActivityAncestors4");
             if (BrowseActivityAncestorsClass != null) try {
-                hookMethods(BrowseActivityAncestorsClass, "onStart", (HookCallBack) param -> setActivityFullscreen((Activity) param.thisObject));
+                newHookMethods(BrowseActivityAncestorsClass, "onStart",
+                        (HookCallBack) param -> setActivityFullscreen((Activity) param.thisObject)
+                );
             }catch (Throwable ignored){}
         }
         {   // 小说阅读界面
             final Class<?> NovelBrowseActivityClass = getThisPackgeClass(".ui.NovelBrowseActivity");
             if (NovelBrowseActivityClass != null) try {
-                hookMethods(NovelBrowseActivityClass, "onStart", (HookCallBack) param -> {
+                newHookMethods(NovelBrowseActivityClass, "onStart", (HookCallBack) param -> {
                     Activity activity = (Activity) param.thisObject;
                     setActivityFullscreen(activity);
                     View decorView = activity.getWindow().getDecorView();
@@ -71,15 +74,15 @@ public final class Others extends PublicContent {
         {   // 分享页
             if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
                 final Class<?> ShareActivityClass = getThisPackgeClass(".ui.ShareActivity");
-                if (ShareActivityClass != null)try {
-                    hookMethods(ShareActivityClass, "onStart",(HookCallBack) param -> {
+                if (ShareActivityClass != null) try {
+                    newHookMethods(ShareActivityClass, "onStart",(HookCallBack) param -> {
                         onSetActivityStatusBar((Activity) param.thisObject, 0x80000000);
                     });
                 }catch (Throwable ignored){}
             }else {
                 final Class<?> ShareActivityV2Class = getThisPackgeClass(".ui.ShareActivityV2");
                 if (ShareActivityV2Class != null) try {
-                    hookMethods(ShareActivityV2Class, "onStart", (HookCallBack) param -> {
+                    newHookMethods(ShareActivityV2Class, "onStart", (HookCallBack) param -> {
                         setActivityFullscreen((Activity) param.thisObject);
                     });
                 }catch (Throwable ignored){}
@@ -95,18 +98,18 @@ public final class Others extends PublicContent {
 
     // 去除更新检测
     private static void AppUpDataHelper(){
-        final Class<?> AppUpDataHelperClass = getThisPackgeClass(".helper.AppUpDataHelper");
-        if (AppUpDataHelperClass != null) try {
-            findAndHookMethod(AppUpDataHelperClass, "checkVersionInfo",
-                Activity.class, Class.class, boolean.class, onReturnVoid);
-        } catch (Throwable ignored) {}
+        newHookMethods("okhttp3.Request$Builder", "url", (HookCallBack) param -> {
+            Object url = param.args[0];
+            if (url.getClass().equals(String.class) && ((String) url).contains("/dynamic/comicversion/android"))
+                param.args[0] = "https://1919.114.514/";
+        }, BEFORE);
     }
 
     // 关闭傻逼青少年弹窗
     private static void TeenagerModeDialogActivity(){
         final Class<?> TeenagerModeDialogActivityClass = getThisPackgeClass("_kt.ui.TeenagerModeDialogActivity");
         if (TeenagerModeDialogActivityClass != null) try {
-            hookMethods(TeenagerModeDialogActivityClass, "onStart", (HookCallBack) param -> {
+            newHookMethods(TeenagerModeDialogActivityClass, "onStart", (HookCallBack) param -> {
                 callMethod(param.thisObject, "finish");
             });
         } catch (Throwable ignored) {}
@@ -120,16 +123,18 @@ public final class Others extends PublicContent {
                 super.beforeHookedMethod(param);
                 ClipData clipData = (ClipData) param.args[0];
                 String inText = clipData.getItemAt(0).getText().toString().trim();
-                class temp{
-                    // 在写了在写了...
-                }
-                int isReg = 0;
-                for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*", ".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"}){
-                    if (inText.matches(reg)) ++isReg;
-                }
-                if (isReg == 0 || (isReg > 0 && inText.contains("http") &&
-                        (inText.contains("muwai.com") || inText.contains("dmzj.com")))) return;
-                param.args[0] = ClipData.newPlainText("","");
+                if ((boolean) (newMethodResult(() -> {
+                    String clazzName;
+                    for (StackTraceElement stack : Thread.currentThread().getStackTrace())
+                        if ((clazzName = stack.getClassName()) != null && (clazzName.contains(DMZJ_PKGN) || clazzName.contains(DMZJSQ_PKGN)))
+                            return true;
+                    return false;
+                }))) return;
+                for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*", ".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"})
+                    if (inText.matches(reg) && !(inText.contains("http") && (inText.contains("muwai.com") || inText.contains("dmzj.com")))) {
+                        param.args[0] = ClipData.newPlainText("","");
+                        return;
+                    }
             }
         };
         try {

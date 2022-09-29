@@ -3,9 +3,8 @@ package ss.colytitse.fuckdmzj.atsg;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
-import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.getIdentifier;
-import static ss.colytitse.fuckdmzj.test.PublicContent.*;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import de.robv.android.xposed.XC_MethodHook;
 import ss.colytitse.fuckdmzj.test.PublicContent;
+import ss.colytitse.fuckdmzj.tool.OkHttp;
 
 @SuppressLint({"NewApi", "StaticFieldLeak", "DefaultLocale"})
 public final class AutoSign extends PublicContent {
@@ -46,7 +46,7 @@ public final class AutoSign extends PublicContent {
     }
 
     public static void initStart(){
-        Class<?> HomeTabsActivitysClass = getClazz(TARGET_PACKAGE_NAME + ".ui.home.HomeTabsActivitys");
+        Class<?> HomeTabsActivitysClass = getThisPackgeClass(".ui.home.HomeTabsActivitys");
         if (HomeTabsActivitysClass != null) try {
             XC_MethodHook xc_methodHook = new XC_MethodHook() {
                 @Override
@@ -65,16 +65,8 @@ public final class AutoSign extends PublicContent {
         }catch (Exception ignored){}
     }
 
-    private static void showToast(String text){
-        new Thread(() -> {
-            Looper.prepare();
-            Toast.makeText(
-                    thisActivity.getApplicationContext(),
-                    String.format("-- AutoSignInfo --\n%s", text),
-                    Toast.LENGTH_SHORT
-            ).show();
-            Looper.loop();
-        }).start();
+    public static void showToast(String text){
+        showToast(thisActivity.getApplicationContext(), String.format("-- AutoSignInfo --\n%s", text));
     }
 
     private static List<String> onDaysTask(UserInfo userInfo){

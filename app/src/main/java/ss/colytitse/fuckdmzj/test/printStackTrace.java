@@ -36,7 +36,6 @@ public class printStackTrace {
                         Log.d(TAG, clazzName + " -> " + md.getName() + " :args[" + Arrays.toString(param.args) + "]");
                     }
                 });
-
             }
         }
 

@@ -75,7 +75,7 @@ public final class AdLayout extends PublicContent {
     private static void NovelBrowseActivity(){
         final Class<?> NovelBrowseActivityClass = getThisPackgeClass(".ui.NovelBrowseActivity");
         if (NovelBrowseActivityClass != null) try {
-            hookMethods(NovelBrowseActivityClass, "onStart", (HookCallBack) param -> {
+            newHookMethods(NovelBrowseActivityClass, "onStart", (HookCallBack) param -> {
                 Context thisContext = (Context) param.thisObject;
                 Activity thisActivity = (Activity) param.thisObject;
                 int identifier = getIdentifier(thisContext, "id", "layout_container");
@@ -136,7 +136,7 @@ public final class AdLayout extends PublicContent {
         final Class<?> LaunchInterceptorActivityClass = getThisPackgeClass(".ui.LaunchInterceptorActivity");
         if (LaunchInterceptorActivityClass == null) return;
         try {
-            hookMethods(LaunchInterceptorActivityClass, "onCreate",  (HookCallBack)  param -> {
+            newHookMethods(LaunchInterceptorActivityClass, "onCreate",  (HookCallBack)  param -> {
                 LaunchReplacement(param, Color.parseColor(TARGET_PACKAGE_NAME.equals(DMZJ_PKGN) ? "#0080ec" : "#ffaf25"), res);
             });
         }catch (Throwable ignored){}

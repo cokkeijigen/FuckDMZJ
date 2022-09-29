@@ -3,6 +3,8 @@ package ss.colytitse.fuckdmzj.hook;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static ss.colytitse.fuckdmzj.MainHook.TARGET_PACKAGE_NAME;
+import static ss.colytitse.fuckdmzj.MainHook.getClazz;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +16,9 @@ import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
 
 import java.lang.reflect.Method;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
@@ -120,11 +125,21 @@ public final class MethodHook extends PublicContent {
             });
         }
 
-        public static void hookMethods(Class<?> clazz, String methodName, Object callBack){
-            hookMethods(clazz, methodName, callBack, FuckerHook.AFTER);
+        public static void newHookMethods(String className, String methodName, Object callBack){
+            Class<?> clazz = getClazz(className);
+            if(clazz != null) newHookMethods(getClazz(className), methodName, callBack);
         }
 
-        public static void hookMethods(Class<?> clazz, String methodName, Object callBack, int callBackType){
+        public static void newHookMethods(Class<?> clazz, String methodName, Object callBack){
+            newHookMethods(clazz, methodName, callBack, AFTER);
+        }
+
+        public static void newHookMethods(String className, String methodName, Object callBack, int callBackType){
+            Class<?> clazz = getClazz(className);
+            if(clazz != null) newHookMethods(clazz, methodName, callBack, callBackType);
+        }
+
+        public static void newHookMethods(Class<?> clazz, String methodName, Object callBack, int callBackType){
             new hookMethods(clazz, methodName, callBack, callBackType).run();
         }
 
@@ -150,15 +165,15 @@ public final class MethodHook extends PublicContent {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         super.beforeHookedMethod(param);
                         if (!param.thisObject.getClass().equals(targetClass)) return;
-                        if (callBackType ==  FuckerHook.REPLACE)
+                        if (callBackType ==  REPLACE)
                             param.setResult(((HookReplaceCallBack) callBack).hook(param));
-                        else if (callBackType == FuckerHook.BEFORE)
+                        else if (callBackType == BEFORE)
                             ((HookCallBack) callBack).hook(param);
                     }
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
-                        if (param.thisObject.getClass().equals(targetClass) && callBackType == FuckerHook.AFTER)
+                        if (param.thisObject.getClass().equals(targetClass) && callBackType == AFTER)
                             ((HookCallBack) callBack).hook(param);
                     }
                 };
@@ -181,7 +196,7 @@ public final class MethodHook extends PublicContent {
             }
         }
 
-        public interface Fucker{
+        public interface Fucker {
             void hook(Class<?> clazz);
         }
         public interface HookCallBack{

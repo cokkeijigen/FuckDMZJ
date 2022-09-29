@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import ss.colytitse.fuckdmzj.test.PublicContent;
+import ss.colytitse.fuckdmzj.tool.OkHttp;
 
 @SuppressLint({"NewApi", "StaticFieldLeak", "DefaultLocale"})
 public final class UserInfo extends PublicContent {

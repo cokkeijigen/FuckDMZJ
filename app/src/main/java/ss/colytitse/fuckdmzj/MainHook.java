@@ -6,18 +6,11 @@ import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.XModuleResources;
-import android.util.Log;
-
 import java.lang.reflect.Field;
-import de.robv.android.xposed.IXposedHookInitPackageResources;
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.IXposedHookZygoteInit;
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.callbacks.XC_InitPackageResources;
-import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import ss.colytitse.fuckdmzj.atsg.AutoSign;
+import de.robv.android.xposed.*;
+import de.robv.android.xposed.callbacks.*;
+import ss.colytitse.fuckdmzj.atsg.*;
+import ss.colytitse.fuckdmzj.gdhd.*;
 import ss.colytitse.fuckdmzj.hook.*;
 import ss.colytitse.fuckdmzj.test.PublicContent;
 
@@ -31,10 +24,12 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
     public static ClassLoader APPLICATION_CLASS_LOADER = null;
     public static ClassLoader LPPARAM_CLASS_LOADER = null;
     public static String TARGET_PACKAGE_NAME = "";
-    private static String MODULE_PATH = null;
+    private static String MODULE_PATH = "";
+    public static ReplaceActivity.CreateResId CREATE_RES_ID;
 
     // 获取类
     public static Class<?> getClazz(String className){
+        className = className.trim().replace("/",".");
         try {
             return findClass(className, APPLICATION_CLASS_LOADER);
         } catch (Throwable ignored) {}
@@ -62,10 +57,6 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
         return field.get(param.thisObject);
     }
 
-    private interface HandleLoad{
-        void load();
-    }
-
     private void initApplicationHandleLoad(HandleLoad handleLoad){
         findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
             @Override
@@ -90,12 +81,12 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.initStart();
             AutoSign.SignInView();
             AutoSign.clearSignButtonView();
-            // test();
+            test();
         });
     }
 
     private void test() {
-        // setMethodInvokePrint(getThisPackgeClass(".ui.CartoonInstructionActivity"));
+        FilterKamiGakusi.Runnenr();
     }
 
     @Override
@@ -109,5 +100,10 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
         XModuleResources instance = XModuleResources.createInstance(MODULE_PATH, resparam.res);
         int img_lauch_bitch = resparam.res.addResource(instance, R.drawable.img_lauch_bitch);
         initApplicationHandleLoad(() -> LaunchInterceptorActivity(img_lauch_bitch));
+        CREATE_RES_ID = new ReplaceActivity.CreateResId();
+        CREATE_RES_ID.img_layout = resparam.res.addResource(instance, R.drawable.img_layout_neko);
+        CREATE_RES_ID.img_icon_clock = resparam.res.addResource(instance, R.drawable.img_icon_clock);
+        CREATE_RES_ID.img_icon_tag = resparam.res.addResource(instance, R.drawable.img_icon_tag);
+        CREATE_RES_ID.img_icon_head = resparam.res.addResource(instance, R.drawable.img_icon_head);
     }
 }
