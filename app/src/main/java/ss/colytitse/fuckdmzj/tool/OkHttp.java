@@ -19,12 +19,10 @@ public final class OkHttp extends PublicContent {
         return InitComplete;
     }
 
-    public static Object RequestBuilder(String url, Object post) throws Exception {
+    public static Object RequestBuilder(String url) throws Exception {
         if (!OkHttp.init()) return null;
         Object requestBuilder = RequestBuilderClass.newInstance();
         requestBuilder = callMethod(requestBuilder, "url", url);
-        if (post != null)
-            requestBuilder = callMethod(requestBuilder, "post", post);
         return callMethod(requestBuilder, "build");
     }
 

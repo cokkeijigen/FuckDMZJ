@@ -4,7 +4,6 @@ plugins {
 
 android {
     compileSdk 31
-
     defaultConfig {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20

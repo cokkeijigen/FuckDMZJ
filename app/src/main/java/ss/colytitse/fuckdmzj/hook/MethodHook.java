@@ -151,7 +151,7 @@ public final class MethodHook extends PublicContent {
             return thisFuckerClass;
         }
 
-        public static final class  hookMethods{
+        public static final class hookMethods{
 
             private final Class<?> targetClass;
             private final String targetMethodName;

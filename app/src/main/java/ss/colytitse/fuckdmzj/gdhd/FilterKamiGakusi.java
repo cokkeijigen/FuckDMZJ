@@ -68,7 +68,7 @@ public class FilterKamiGakusi extends PublicContent {
 
     private static boolean isKamiGakushi(String comicId)  {
         try {
-            Object Request = RequestBuilder("https://nnv4api.muwai.com/comic/detail/" + comicId, null);
+            Object Request = RequestBuilder("https://nnv4api.muwai.com/comic/detail/" + comicId);
             String result = OkHttp.ResponseBodyString(Request);
             String decrypt = RSAUtils.decrypt(result, RSA_PRIVATE_KEY);
             return decrypt.contains("漫画不存在");

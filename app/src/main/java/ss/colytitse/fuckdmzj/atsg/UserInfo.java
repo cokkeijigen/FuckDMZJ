@@ -112,7 +112,7 @@ public final class UserInfo extends PublicContent {
             Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
                     "http://v3api.muwai.com" : "http://nnv3api.muwai.com") +  /* 获取状态接口 */
                     "/task/index?uid=%s&token=%s&sign=%s", userInfo.userId, userInfo.userToken, userInfo.userSign
-            ), null);
+            ));
             this.result = OkHttp.ResponseBodyString(Request);
             Arrays.stream(Objects.requireNonNull(this.result).split(","))
                     .filter(e -> e.contains("sign_count") || e.contains("credits_nums")|| e.contains("silver_nums"))

@@ -41,7 +41,7 @@ public final class AutoSign extends PublicContent {
         if ((connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)) != null
                 && (info = connectivity.getActiveNetworkInfo()) != null && info.isConnected())
             return  info.getState() == NetworkInfo.State.CONNECTED;
-        return true;
+        return false;
     }
 
     public static void initStart(){
@@ -63,10 +63,10 @@ public final class AutoSign extends PublicContent {
     private static List<String> onDaysTask(UserInfo userInfo){
         List<String> result = new ArrayList<>();
         for (int i = 1; i < 17; i++) try {
-            Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
+            Object Request = OkHttp.RequestBuilder(String.format((DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME) ?
                     "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* 任务签到接口 */
                     "/task/get_reward?uid=%s&token=%s&sign=%s&id=%d", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign(), i
-            ), null);
+            ));
             String temp = OkHttp.ResponseBodyString(Request);
             result.add(String.format("id_%d ->%s\n",i,temp));
         } catch (Exception e) {
@@ -76,10 +76,10 @@ public final class AutoSign extends PublicContent {
     }
 
     private static String atSignApi(UserInfo userInfo) throws Exception {
-        Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
+        Object Request = OkHttp.RequestBuilder(String.format((DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME) ?
                 "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* APP签到接口 */
                 "/task/sign?uid=%s&token=%s&sign=%s", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign()
-        ), null);
+        ));
         return OkHttp.ResponseBodyString(Request);
     }
 
@@ -101,14 +101,12 @@ public final class AutoSign extends PublicContent {
                     showToast(String.format("已连续签到： %d 天", afterSG.sign_count));
                 } else showToast("签到状态未知！");
                 signComplete = true;
-
                 UserInfo.user beforeDT = new UserInfo.user(userInfo);
                 List<String> DaysTaskResult = onDaysTask(userInfo);  // 任务签到
                 UserInfo.user afterDT = new UserInfo.user(userInfo);
                 if (beforeDT.notEquals(afterDT)) showToast(String.format("完成任务：积分 + %d 银币 + %d",
                         afterDT.credits_nums - beforeDT.credits_nums, afterDT.silver_nums - beforeDT.silver_nums)
                 );
-
                 Log.d(INFO, "SignResult -> \n" + atSignResult);
                 Log.d(INFO, "DaysTaskResult -> \n" + DaysTaskResult);
             }catch (Exception e){

@@ -81,7 +81,7 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AutoSign.initStart();
             AutoSign.SignInView();
             AutoSign.clearSignButtonView();
-            test();
+//            test();
         });
     }
 
@@ -100,10 +100,10 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
         XModuleResources instance = XModuleResources.createInstance(MODULE_PATH, resparam.res);
         int img_lauch_bitch = resparam.res.addResource(instance, R.drawable.img_lauch_bitch);
         initApplicationHandleLoad(() -> LaunchInterceptorActivity(img_lauch_bitch));
-//        CREATE_RES_ID = new ReplaceActivity.CreateResId();
-//        CREATE_RES_ID.img_layout = resparam.res.addResource(instance, R.drawable.img_layout_neko);
-//        CREATE_RES_ID.img_icon_clock = resparam.res.addResource(instance, R.drawable.img_icon_clock);
-//        CREATE_RES_ID.img_icon_tag = resparam.res.addResource(instance, R.drawable.img_icon_tag);
-//        CREATE_RES_ID.img_icon_head = resparam.res.addResource(instance, R.drawable.img_icon_head);
+        CREATE_RES_ID = new ReplaceActivity.CreateResId();
+        CREATE_RES_ID.img_layout = resparam.res.addResource(instance, R.drawable.img_layout_neko);
+        CREATE_RES_ID.img_icon_clock = resparam.res.addResource(instance, R.drawable.img_icon_clock);
+        CREATE_RES_ID.img_icon_tag = resparam.res.addResource(instance, R.drawable.img_icon_tag);
+        CREATE_RES_ID.img_icon_head = resparam.res.addResource(instance, R.drawable.img_icon_head);
     }
 }
