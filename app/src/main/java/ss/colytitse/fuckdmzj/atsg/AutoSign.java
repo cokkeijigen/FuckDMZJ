@@ -3,15 +3,14 @@ package ss.colytitse.fuckdmzj.atsg;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
-import static ss.colytitse.fuckdmzj.hook.MethodHook.getIdentifier;
-
+import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
+import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,19 +47,12 @@ public final class AutoSign extends PublicContent {
     public static void initStart(){
         Class<?> HomeTabsActivitysClass = getThisPackgeClass(".ui.home.HomeTabsActivitys");
         if (HomeTabsActivitysClass != null) try {
-            XC_MethodHook xc_methodHook = new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    thisActivity = (Activity) param.thisObject;
-                    UserInfo userInfo = new UserInfo((Context) param.thisObject);
-                    if(hasNetworkAvailable(thisActivity.getApplicationContext()))
-                        new Thread(() -> onStart(userInfo)).start();
-                }
-            };
-            if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN))
-                findAndHookMethod(HomeTabsActivitysClass, "onCreate", Bundle.class, xc_methodHook);
-            else findAndHookMethod(HomeTabsActivitysClass, "initView", xc_methodHook);
+            newHookMethods(HomeTabsActivitysClass,"onCreate", (HookCallBack) param -> {
+                thisActivity = (Activity) param.thisObject;
+                UserInfo userInfo = new UserInfo((Context) param.thisObject);
+                if(hasNetworkAvailable(thisActivity.getApplicationContext()))
+                    new Thread(() -> onStart(userInfo)).start();
+            });
         }catch (Exception ignored){}
     }
 
