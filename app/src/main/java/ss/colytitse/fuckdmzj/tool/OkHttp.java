@@ -8,16 +8,14 @@ import ss.colytitse.fuckdmzj.test.PublicContent;
 public final class OkHttp extends PublicContent {
 
     private static Class<?> RequestBuilderClass = null;
-    private static Class<?> FormBodyBuilderClass = null;
     private static Class<?> OkHttpClientClass = null;
     private static boolean InitComplete = false;
 
     public static boolean init(){
         if (InitComplete) return true;
         RequestBuilderClass = getClazz("okhttp3.Request$Builder");
-        FormBodyBuilderClass = getClazz("okhttp3.FormBody$Builder");
         OkHttpClientClass = getClazz("okhttp3.OkHttpClient");
-        InitComplete = RequestBuilderClass != null && FormBodyBuilderClass != null && OkHttpClientClass != null;
+        InitComplete = RequestBuilderClass != null && OkHttpClientClass != null;
         return InitComplete;
     }
 
@@ -37,16 +35,6 @@ public final class OkHttp extends PublicContent {
         Object Response = callMethod(newCall, "execute");
         Object ResponseBody = callMethod(Response, "body");
         return  (String) callMethod(ResponseBody, "string");
-    }
-
-    public static Object FormBodyBuilder(String ...args) throws Exception{
-        if (!OkHttp.init()) return null;
-        Object formBodyBuilder = FormBodyBuilderClass.newInstance();
-        for (String arg : args) {
-            String[] temp = arg.split("=");
-            formBodyBuilder = callMethod(formBodyBuilder, "add", temp[0], temp[1]);
-        }
-        return callMethod(formBodyBuilder, "build");
     }
 }
 

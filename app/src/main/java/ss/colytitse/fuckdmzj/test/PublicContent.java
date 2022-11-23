@@ -5,9 +5,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-
 public class PublicContent extends printStackTrace {
 
     public static final String INFO = "definfo_";
@@ -26,6 +23,7 @@ public class PublicContent extends printStackTrace {
         }
         return null;
     }
+
 
     public interface MethodResult{
         Object method();

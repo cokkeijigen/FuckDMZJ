@@ -24,7 +24,21 @@
                 android:layout_marginTop="5dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_layout_neko"/>
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:paddingLeft="20dp"
+                android:layout_height="match_parent">
+                <TextView
+                    android:textSize="15dp"
+                    android:textColor="#ffffff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A"
+                    android:singleLine="true"
+                    android:drawableLeft="@drawable/img_icon_head"
+                    android:drawablePadding="5dp" />
+            </LinearLayout>
         </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>

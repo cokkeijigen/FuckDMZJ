@@ -37,11 +37,11 @@ public final class AutoSign extends PublicContent {
             = "{\"code\":0,\"msg\":\"\\u6210\\u529f\"}";
     private static Activity thisActivity = null;
 
-    public static boolean notNetworkAvailable(Context context) {
+    public static boolean hasNetworkAvailable(Context context) {
         NetworkInfo info; ConnectivityManager  connectivity;
         if ((connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)) != null
                 && (info = connectivity.getActiveNetworkInfo()) != null && info.isConnected())
-            return  info.getState() != NetworkInfo.State.CONNECTED;
+            return  info.getState() == NetworkInfo.State.CONNECTED;
         return true;
     }
 
@@ -54,9 +54,8 @@ public final class AutoSign extends PublicContent {
                     super.beforeHookedMethod(param);
                     thisActivity = (Activity) param.thisObject;
                     UserInfo userInfo = new UserInfo((Context) param.thisObject);
-                    if(notNetworkAvailable(thisActivity.getApplicationContext()))
-                        return;
-                    new Thread(() -> onStart(userInfo)).start();
+                    if(hasNetworkAvailable(thisActivity.getApplicationContext()))
+                        new Thread(() -> onStart(userInfo)).start();
                 }
             };
             if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN))
@@ -84,17 +83,11 @@ public final class AutoSign extends PublicContent {
         return result;
     }
 
-    private static String at1SignApi(UserInfo userInfo) throws Exception {
+    private static String atSignApi(UserInfo userInfo) throws Exception {
         Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
                 "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* APP签到接口 */
                 "/task/sign?uid=%s&token=%s&sign=%s", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign()
         ), null);
-        return OkHttp.ResponseBodyString(Request);
-    }
-
-    private static String at2SignApi(UserInfo userInfo) throws Exception{
-        Object FormBody = OkHttp.FormBodyBuilder("token=" + userInfo.getUserToken(), "uid=" + userInfo.getUserId(), "sign=" + userInfo.getUserSign());
-        Object Request = OkHttp.RequestBuilder("http://api.bbs.muwai.com/v1/sign/add", FormBody); /* 貌似是网页签到接口? */
         return OkHttp.ResponseBodyString(Request);
     }
 
@@ -103,11 +96,10 @@ public final class AutoSign extends PublicContent {
             boolean signComplete = false;
             try {
                 UserInfo.user beforeSG = new UserInfo.user(userInfo);       // 签到前数据;
-                String at1SignResult = at1SignApi(userInfo);
-                String at2SignResult = at2SignApi(userInfo);
-                if (Objects.equals(at1SignResult, SIGN_RESULT_COM))
+                String atSignResult = atSignApi(userInfo);
+                if (Objects.equals(atSignResult, SIGN_RESULT_COM))
                     showToast("今日已签到！");
-                else if (Objects.equals(at1SignResult, SIGN_RESULT_OK)){
+                else if (Objects.equals(atSignResult, SIGN_RESULT_OK)){
                     UserInfo.user afterSG = new UserInfo.user(userInfo);  // 签到后数据
                     showToast("签到成功" + (
                             beforeSG.notEquals(afterSG) ? String.format( "：积分 + %d 银币 + %d",
@@ -125,8 +117,7 @@ public final class AutoSign extends PublicContent {
                         afterDT.credits_nums - beforeDT.credits_nums, afterDT.silver_nums - beforeDT.silver_nums)
                 );
 
-                Log.d(INFO, "SignResult1 -> \n" + at1SignResult);
-                Log.d(INFO, "SignResult2 -> \n" + at2SignResult);
+                Log.d(INFO, "SignResult -> \n" + atSignResult);
                 Log.d(INFO, "DaysTaskResult -> \n" + DaysTaskResult);
             }catch (Exception e){
                 Log.d(TAG, "SignResult: err-> " + e);
@@ -143,7 +134,7 @@ public final class AutoSign extends PublicContent {
         if (signInTv.getText().equals("立即签到")) new Thread(() -> {
             try {
                 if (userInfo == null) return;
-                String SignResult = at1SignApi(userInfo);
+                String SignResult = atSignApi(userInfo);
                 if (!Objects.equals(SignResult, SIGN_RESULT_COM) || !Objects.equals(SignResult, SIGN_RESULT_OK))
                     signInTv.performClick();
             } catch (Exception ignored) {}
@@ -163,7 +154,7 @@ public final class AutoSign extends PublicContent {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
                     Context mContext = (Context) param.args[0];
-                    if(notNetworkAvailable(mContext)) return;
+                    if(!hasNetworkAvailable(mContext)) return;
                     UserInfo userInfo = new UserInfo(mContext);
                     XC_MethodHook xc_methodHook = new XC_MethodHook() {
                         @Override

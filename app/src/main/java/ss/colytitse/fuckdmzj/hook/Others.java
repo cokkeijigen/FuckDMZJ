@@ -11,10 +11,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import de.robv.android.xposed.XC_MethodHook;
 import ss.colytitse.fuckdmzj.test.PublicContent;
