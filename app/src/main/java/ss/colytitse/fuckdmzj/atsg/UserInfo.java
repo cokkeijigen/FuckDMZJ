@@ -25,17 +25,14 @@ public final class UserInfo extends PublicContent {
     private final String table;
 
     public UserInfo(Context mContext){
-        this.database = app() ? "cartoon" : "room_dmzjsq.db";
-        this.table = app() ? "user" : "User";
+        boolean dmzj = TARGET_PACKAGE_NAME.equals(DMZJ_PKGN);
+        this.database = dmzj ? "cartoon" : "room_dmzjsq.db";
+        this.table = dmzj ? "user" : "User";
         Map<String, String> data = this.getData(mContext);
         if (data == null) return;
         this.userId = data.get("uid");
         this.userToken = data.get("token");
         this.userSign = createUserSign();
-    }
-
-    private boolean app(){
-        return TARGET_PACKAGE_NAME.equals(DMZJ_PKGN);
     }
 
     @SuppressLint({"Recycle","Range"})

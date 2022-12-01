@@ -49,15 +49,15 @@ public final class AutoSign extends PublicContent {
         if (HomeTabsActivitysClass != null) try {
             newHookMethods(HomeTabsActivitysClass,"onCreate", (HookCallBack) param -> {
                 thisActivity = (Activity) param.thisObject;
-                UserInfo userInfo = new UserInfo((Context) param.thisObject);
-                if(hasNetworkAvailable(thisActivity.getApplicationContext()))
+                UserInfo userInfo = new UserInfo(thisActivity);
+                if(hasNetworkAvailable(thisActivity))
                     new Thread(() -> onStart(userInfo)).start();
             });
         }catch (Exception ignored){}
     }
 
     public static void showToast(String text){
-        showToast(thisActivity.getApplicationContext(), String.format("-- AutoSignInfo --\n%s", text));
+        showToast(thisActivity, String.format("-- AutoSignInfo --\n%s", text));
     }
 
     private static List<String> onDaysTask(UserInfo userInfo){
@@ -84,35 +84,34 @@ public final class AutoSign extends PublicContent {
     }
 
     private static void onStart(UserInfo userInfo){
-        if (OkHttp.init() && userInfo.initComplete()){
-            boolean signComplete = false;
-            try {
-                UserInfo.user beforeSG = new UserInfo.user(userInfo);       // 签到前数据;
-                String atSignResult = atSignApi(userInfo);
-                if (Objects.equals(atSignResult, SIGN_RESULT_COM))
-                    showToast("今日已签到！");
-                else if (Objects.equals(atSignResult, SIGN_RESULT_OK)){
-                    UserInfo.user afterSG = new UserInfo.user(userInfo);  // 签到后数据
-                    showToast("签到成功" + (
-                            beforeSG.notEquals(afterSG) ? String.format( "：积分 + %d 银币 + %d",
-                                    afterSG.credits_nums - beforeSG.credits_nums, afterSG.silver_nums - beforeSG.silver_nums
-                            ) : "！")
-                    );
-                    showToast(String.format("已连续签到： %d 天", afterSG.sign_count));
-                } else showToast("签到状态未知！");
-                signComplete = true;
-                UserInfo.user beforeDT = new UserInfo.user(userInfo);
-                List<String> DaysTaskResult = onDaysTask(userInfo);  // 任务签到
-                UserInfo.user afterDT = new UserInfo.user(userInfo);
-                if (beforeDT.notEquals(afterDT)) showToast(String.format("完成任务：积分 + %d 银币 + %d",
-                        afterDT.credits_nums - beforeDT.credits_nums, afterDT.silver_nums - beforeDT.silver_nums)
+        if (!(OkHttp.init() && userInfo.initComplete())) return;
+        boolean signComplete = false;
+        try {
+            UserInfo.user beforeSG = new UserInfo.user(userInfo);       // 签到前数据;
+            String atSignResult = atSignApi(userInfo);
+            if (Objects.equals(atSignResult, SIGN_RESULT_COM))
+                showToast("今日已签到！");
+            else if (Objects.equals(atSignResult, SIGN_RESULT_OK)){
+                UserInfo.user afterSG = new UserInfo.user(userInfo);  // 签到后数据
+                showToast("签到成功" + (
+                        beforeSG.notEquals(afterSG) ? String.format( "：积分 + %d 银币 + %d",
+                                afterSG.credits_nums - beforeSG.credits_nums, afterSG.silver_nums - beforeSG.silver_nums
+                        ) : "！")
                 );
-                Log.d(INFO, "SignResult -> \n" + atSignResult);
-                Log.d(INFO, "DaysTaskResult -> \n" + DaysTaskResult);
-            }catch (Exception e){
-                Log.d(TAG, "SignResult: err-> " + e);
-                if(!signComplete) showToast("签到失败！");
-            }
+                showToast(String.format("已连续签到： %d 天", afterSG.sign_count));
+            } else showToast("签到状态未知！");
+            signComplete = true;
+            UserInfo.user beforeDT = new UserInfo.user(userInfo);
+            List<String> DaysTaskResult = onDaysTask(userInfo);  // 任务签到
+            UserInfo.user afterDT = new UserInfo.user(userInfo);
+            if (beforeDT.notEquals(afterDT)) showToast(String.format("完成任务：积分 + %d 银币 + %d",
+                    afterDT.credits_nums - beforeDT.credits_nums, afterDT.silver_nums - beforeDT.silver_nums)
+            );
+            Log.d(INFO, "SignResult -> \n" + atSignResult);
+            Log.d(INFO, "DaysTaskResult -> \n" + DaysTaskResult);
+        }catch (Exception e){
+            Log.d(TAG, "SignResult: err-> " + e);
+            if(!signComplete) showToast("签到失败！");
         }
     }
 

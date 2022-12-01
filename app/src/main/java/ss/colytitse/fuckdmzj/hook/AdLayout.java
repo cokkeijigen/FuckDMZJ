@@ -106,14 +106,24 @@ public final class AdLayout extends PublicContent {
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setGravity(Gravity.CENTER);
-        linearLayout.setBackgroundColor(color);
         linearLayout.setPadding(110, linearLayout.getPaddingTop(), 110, linearLayout.getPaddingBottom());
-        ImageView imageView = new ImageView(mActivty);
-        imageView.setImageDrawable(mContext.getDrawable(res));
+        linearLayout.setBackgroundColor(color);
         TextView textView = new TextView(mActivty);
         textView.setText("-Started By FuckDMZJXposed-");
-        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        ImageView imageView = new ImageView(mActivty);
         textView.setTextColor(Color.parseColor("#ffffff"));
+        try {
+            imageView.setImageDrawable(mContext.getDrawable(res));
+        }catch (Exception igonred){
+            // lspatched
+            int lsp_img_lauch_bitch = getIdentifier(mContext, "drawable", "img_lauch_bitch");
+            imageView.setImageDrawable(mContext.getDrawable(lsp_img_lauch_bitch));
+            if (DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME)) {
+                textView.setTextColor(Color.parseColor("#000000"));
+                linearLayout.setBackgroundColor(Color.parseColor("#ffffff"));
+            }
+        }
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         textView.setPadding(0,100,0,0);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(15);
