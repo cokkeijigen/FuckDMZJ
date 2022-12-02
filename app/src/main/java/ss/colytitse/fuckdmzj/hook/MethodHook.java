@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -49,7 +50,7 @@ public final class MethodHook extends PublicContent {
         };
     }
 
-    public static XC_MethodHook onActivityFinish(boolean before){
+    public static XC_MethodHook onActivityFinish(boolean before) {
         return before ? new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

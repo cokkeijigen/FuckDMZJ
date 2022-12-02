@@ -1,7 +1,6 @@
 package ss.colytitse.fuckdmzj.atsg;
 
 import static de.robv.android.xposed.XposedBridge.*;
-import static de.robv.android.xposed.XposedHelpers.*;
 import static ss.colytitse.fuckdmzj.MainHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.FuckerHook.*;
 import static ss.colytitse.fuckdmzj.hook.MethodHook.*;
@@ -10,14 +9,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,8 +130,7 @@ public final class AutoSign extends PublicContent {
 
     public static void SignInView() {
         // 签到页自动点击签到按钮，前提是如果后台自动签到失败
-        final String SignInView = TARGET_PACKAGE_NAME + "_kt.views.task.SignInView";
-        Class<?> SignInViewClass = getClazz(SignInView);
+        Class<?> SignInViewClass = getThisPackgeClass("_kt.views.task.SignInView");
         if (SignInViewClass != null) try {
             XC_MethodHook setDaySignTask = new XC_MethodHook() {
                 @Override
@@ -165,41 +159,29 @@ public final class AutoSign extends PublicContent {
 
     public static void clearSignButtonView(){
         // 隐藏签到按钮的红点
-        if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
-            final String MainSceneMineEnActivity = "com.dmzj.manhua.ui.home.MainSceneMineEnActivity";
-            Class<?> MainSceneMineEnActivityClass = getClazz(MainSceneMineEnActivity);
+        if (DMZJ_PKGN.equals(TARGET_PACKAGE_NAME)) {
+            Class<?> MainSceneMineEnActivityClass = getThisPackgeClass(".ui.home.MainSceneMineEnActivity");
             if (MainSceneMineEnActivityClass != null) try {
-                findAndHookMethod(MainSceneMineEnActivityClass, "onStart", new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        Activity mActivty = (Activity) param.thisObject;
-                        Context mContext = mActivty.getApplicationContext();
-                        int identifier = getIdentifier(mContext, "id", "iv_my_unread_counts2");
-                        ImageView imageView = mActivty.findViewById(identifier);
-                        imageView.setImageAlpha(0);
-                    }
+                newHookMethods(MainSceneMineEnActivityClass,"onStart", (HookCallBack) param ->{
+                    Activity mActivty = (Activity) param.thisObject;
+                    Context mContext = mActivty.getApplicationContext();
+                    int identifier = getIdentifier(mContext, "id", "iv_my_unread_counts2");
+                    ImageView imageView = mActivty.findViewById(identifier);
+                    imageView.setImageAlpha(0);
                 });
             } catch (Throwable ignored) {}
-        } else if (TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN)){
-            final String HomeMeFragment = "com.dmzjsq.manhua_kt.ui.home.HomeMeFragment";
-            Class<?> HomeMeFragmentClass = getClazz(HomeMeFragment);
+        } else if (DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME)){
+            Class<?> HomeMeFragmentClass = getThisPackgeClass("_kt.ui.home.HomeMeFragment");
             if (HomeMeFragmentClass != null) try {
-                findAndHookMethod(HomeMeFragmentClass, "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
-                        new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                super.afterHookedMethod(param);
-                                View result = (View) param.getResult();
-                                Context thisObject = result.getContext();
-                                int resourceId = getIdentifier(thisObject,"id", "unread");
-                                ImageView imageView = result.findViewById(resourceId);
-                                imageView.setImageAlpha(0);
-                            }
-                        }
-                );
+                newHookMethods(HomeMeFragmentClass, "onCreateView", (HookCallBack) param ->{
+                    if(param.args.length != 3) return;
+                    View result = (View) param.getResult();
+                    Context thisObject = result.getContext();
+                    int resourceId = getIdentifier(thisObject,"id", "unread");
+                    ImageView imageView = result.findViewById(resourceId);
+                    imageView.setImageAlpha(0);
+                });
             } catch (Throwable ignored) {}
         }
-
     }
 }
