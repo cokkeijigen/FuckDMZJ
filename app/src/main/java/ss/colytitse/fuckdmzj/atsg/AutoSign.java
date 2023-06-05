@@ -8,7 +8,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,11 +33,16 @@ public final class AutoSign extends PublicContent {
     private static Activity thisActivity = null;
 
     public static boolean hasNetworkAvailable(Context context) {
-        NetworkInfo info; ConnectivityManager  connectivity;
-        if ((connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)) != null
-                && (info = connectivity.getActiveNetworkInfo()) != null && info.isConnected())
-            return  info.getState() == NetworkInfo.State.CONNECTED;
-        return false;
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network = cm.getActiveNetwork();
+        if (null == network) {
+            return false;
+        }
+        NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+        if (null == capabilities) {
+            return false;
+        }
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     public static void initStart(){
@@ -59,7 +65,7 @@ public final class AutoSign extends PublicContent {
         List<String> result = new ArrayList<>();
         for (int i = 1; i < 17; i++) try {
             Object Request = OkHttp.RequestBuilder(String.format((DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME) ?
-                    "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* 任务签到接口 */
+                    "https://v3api.idmzj.com" : "https://nnv3api.idmzj.com") + /* 任务签到接口 */
                     "/task/get_reward?uid=%s&token=%s&sign=%s&id=%d", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign(), i
             ));
             String temp = OkHttp.ResponseBodyString(Request);
@@ -72,7 +78,7 @@ public final class AutoSign extends PublicContent {
 
     private static String atSignApi(UserInfo userInfo) throws Exception {
         Object Request = OkHttp.RequestBuilder(String.format((DMZJSQ_PKGN.equals(TARGET_PACKAGE_NAME) ?
-                "http://v3api.muwai.com" : "http://nnv3api.muwai.com") + /* APP签到接口 */
+                "https://v3api.idmzj.com" : "https://nnv3api.idmzj.com") + /* APP签到接口 */
                 "/task/sign?uid=%s&token=%s&sign=%s", userInfo.getUserId(), userInfo.getUserToken(), userInfo.getUserSign()
         ));
         return OkHttp.ResponseBodyString(Request);

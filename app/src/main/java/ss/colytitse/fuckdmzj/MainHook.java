@@ -81,9 +81,9 @@ public class MainHook extends PublicContent implements IXposedHookLoadPackage, I
             AdLayout.initClassHooks();
             AdService.initClassHooks();
             Others.initClassHooks();
-//            AutoSign.initStart();
+            AutoSign.initStart();
             AutoSign.SignInView();
-//             AutoSign.clearSignButtonView();
+            AutoSign.clearSignButtonView();
         });
     }
 

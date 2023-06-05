@@ -129,7 +129,7 @@ public final class Others extends PublicContent {
                     return false;
                 }))) return;
                 for(String reg : new String[]{".*[A-Z]+.*", ".*[a-z]+.*", ".*[~!@#$%^&*()_+|<>,.?/:;'\\\\[\\\\]{}\\\"]+.*"})
-                    if (inText.matches(reg) && !(inText.contains("http") && (inText.contains("muwai.com") || inText.contains("dmzj.com")))) {
+                    if (inText.matches(reg) && !(inText.contains("http") && (inText.contains("idmzj.com") || inText.contains("dmzj.com")))) {
                         param.args[0] = ClipData.newPlainText("","");
                         return;
                     }
