@@ -73,16 +73,12 @@ public final class Others extends PublicContent {
             if (TARGET_PACKAGE_NAME.equals(DMZJ_PKGN)) {
                 final Class<?> ShareActivityClass = getThisPackgeClass(".ui.ShareActivity");
                 if (ShareActivityClass != null) try {
-                    newHookMethods(ShareActivityClass, "onStart",(HookCallBack) param -> {
-                        onSetActivityStatusBar((Activity) param.thisObject, 0x80000000);
-                    });
+                    newHookMethods(ShareActivityClass, "onStart",(HookCallBack) param -> onSetActivityStatusBar((Activity) param.thisObject, 0x80000000));
                 }catch (Throwable ignored){}
             }else {
                 final Class<?> ShareActivityV2Class = getThisPackgeClass(".ui.ShareActivityV2");
                 if (ShareActivityV2Class != null) try {
-                    newHookMethods(ShareActivityV2Class, "onStart", (HookCallBack) param -> {
-                        setActivityFullscreen((Activity) param.thisObject);
-                    });
+                    newHookMethods(ShareActivityV2Class, "onStart", (HookCallBack) param -> setActivityFullscreen((Activity) param.thisObject));
                 }catch (Throwable ignored){}
             }
         }
@@ -107,9 +103,7 @@ public final class Others extends PublicContent {
     private static void TeenagerModeDialogActivity(){
         final Class<?> TeenagerModeDialogActivityClass = getThisPackgeClass("_kt.ui.TeenagerModeDialogActivity");
         if (TeenagerModeDialogActivityClass != null) try {
-            newHookMethods(TeenagerModeDialogActivityClass, "onStart", (HookCallBack) param -> {
-                callMethod(param.thisObject, "finish");
-            });
+            newHookMethods(TeenagerModeDialogActivityClass, "onStart", (HookCallBack) param -> callMethod(param.thisObject, "finish"));
         } catch (Throwable ignored) {}
     }
 

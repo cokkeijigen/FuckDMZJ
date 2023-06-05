@@ -39,6 +39,7 @@ public final class UserInfo extends PublicContent {
     private Map<String, String> getData(Context mContext){
         try {
             // 读取本地数据库
+            // noinspection ALL
             SQLiteDatabase sqLiteDatabase = mContext.openOrCreateDatabase(this.database, Context.MODE_PRIVATE, null);
             Cursor user = sqLiteDatabase.query(this.table, null, null, null, null, null, null);
             if (user != null){
