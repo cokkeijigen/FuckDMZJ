@@ -8,8 +8,8 @@ android {
         applicationId "ss.colytitse.fuckdmzj"
         minSdk 20
         targetSdk 33
-        versionCode 1991
-        versionName "v1.1.10-4"
+        versionCode 1992
+        versionName "v1.1.10-5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
