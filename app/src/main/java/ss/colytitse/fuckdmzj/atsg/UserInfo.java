@@ -39,6 +39,7 @@ public final class UserInfo extends PublicContent {
     private Map<String, String> getData(Context mContext){
         try {
             // 读取本地数据库
+            // noinspection ALL
             SQLiteDatabase sqLiteDatabase = mContext.openOrCreateDatabase(this.database, Context.MODE_PRIVATE, null);
             Cursor user = sqLiteDatabase.query(this.table, null, null, null, null, null, null);
             if (user != null){
@@ -107,7 +108,7 @@ public final class UserInfo extends PublicContent {
             initComplete = false;
             if (!OkHttp.init()) return;
             Object Request = OkHttp.RequestBuilder(String.format((TARGET_PACKAGE_NAME.equals(DMZJSQ_PKGN) ?
-                    "http://v3api.muwai.com" : "http://nnv3api.muwai.com") +  /* 获取状态接口 */
+                    "https://v3api.idmzj.com" : "https://nnv3api.idmzj.com") +  /* 获取状态接口 */
                     "/task/index?uid=%s&token=%s&sign=%s", userInfo.userId, userInfo.userToken, userInfo.userSign
             ));
             this.result = OkHttp.ResponseBodyString(Request);
